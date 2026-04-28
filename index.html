@@ -74,7 +74,7 @@
         class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-white/10 docked full-width top-0 sticky z-50 transition-colors h-16 md:h-20">
         <div class="flex justify-between items-center w-full px-6 py-4 mx-auto max-w-container-max relative h-full">
             <a href="index.html" class="flex items-center absolute start-6 top-1/2 -translate-y-1/2 z-10">
-                <img src="./assets/only logo.png" alt="Samaka" class="h-16 md:h-28 w-auto">
+                <img src="./assets/only logo.png" alt="Samaka" class="h-20 md:h-28 w-auto">
             </a>
             <div class="flex-1"></div>
             <nav class="hidden md:flex gap-md items-center">
@@ -115,17 +115,17 @@
     <main class="max-w-7xl mx-auto px-6 py-xl pb-32">
         <!-- Hero Section -->
         <div
-            class="relative overflow-hidden mb-xl rounded-3xl min-h-[300px] md:min-h-[400px] flex items-center px-8 md:px-16 shadow-2xl">
+            class="relative overflow-hidden mb-xl rounded-none md:rounded-3xl -mx-6 md:mx-0 min-h-[50vh] md:min-h-[400px] flex items-center justify-center md:justify-start px-8 md:px-16 shadow-2xl">
             <div class="absolute inset-0 z-0">
                 <img id="menu-hero-img" class="w-full h-full object-cover animate-ken-burns"
                     src="./assets/first size.png">
-                <div class="absolute inset-0 bg-black/60 dark:bg-black/80"></div>
+                <div class="absolute inset-0 bg-black/50 dark:bg-black/70"></div>
                 <div
-                    class="absolute inset-0 bg-gradient-to-r rtl:bg-gradient-to-l from-black/60 via-transparent to-transparent">
+                    class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r rtl:md:bg-gradient-to-l from-black/80 via-transparent to-transparent">
                 </div>
             </div>
-            <div class="relative z-10 max-w-2xl text-start">
-                <h1 id="menu-hero-title" class="font-h1 text-4xl md:text-6xl text-white mb-base" data-i18n="menu_title">
+            <div class="relative z-10 w-full max-w-2xl text-center md:text-start">
+                <h1 id="menu-hero-title" class="font-h1 text-6xl md:text-6xl text-white mb-0 md:mb-base drop-shadow-2xl" data-i18n="menu_title">
                     قائمة الطعام</h1>
             </div>
         </div>
@@ -232,15 +232,15 @@
     <div id="dish-modal" class="fixed inset-0 z-[100] modal-overlay items-center justify-center p-4">
         <div class="absolute inset-0" onclick="closeModal()"></div>
         <div
-            class="bg-white dark:bg-abyss-container w-full max-w-4xl rounded-[32px] shadow-3xl overflow-hidden relative z-10 modal-content">
-            <div id="modal-content-container">
+            class="bg-white dark:bg-abyss-container w-full max-w-4xl rounded-[32px] shadow-3xl overflow-hidden relative z-10 modal-content max-h-[85vh] md:max-h-[90vh] flex flex-col">
+            <div id="modal-content-container" class="overflow-y-auto flex-grow no-scrollbar">
                 <!-- Content injected here -->
             </div>
         </div>
     </div>
 
     <!-- Floating Order Button -->
-    <div class="mobile-cart-btn">
+    <div class="mobile-cart-btn md:hidden">
         <button onclick="toggleCart()"
             class="relative w-16 h-16 bg-primary text-white rounded-full shadow-[0_8px_25px_rgba(0,0,0,0.3)] flex items-center justify-center transition-all active:scale-90 hover:scale-105 bioluminescent-glow">
             <span class="material-symbols-outlined text-3xl">shopping_basket</span>
@@ -444,11 +444,21 @@
                 const currentLang = localStorage.getItem('preferred_language') || 'en';
                 const catKey = `filter_${cat.toLowerCase().replace(/\s+/g, '')}`;
                 const translatedCat = (translations[currentLang] && translations[currentLang][catKey]) || cat;
+                const swipeText = currentLang === 'ar' ? 'اسحب للمزيد' : 'Swipe for more';
+                const arrowIcon = currentLang === 'ar' ? 'arrow_back' : 'arrow_forward';
+
+                const swipeIndicator = items.length > 1 ? `
+                        <div class="md:hidden flex items-center gap-1.5 text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-white/10 py-1.5 px-3 rounded-full text-[10px] font-bold tracking-wider animate-pulse flex-shrink-0">
+                            <span>${swipeText}</span>
+                            <span class="material-symbols-outlined text-[14px]">${arrowIcon}</span>
+                        </div>
+                ` : '';
 
                 section.innerHTML = `
-                    <div class="flex items-center gap-base mb-8">
-                        <h2 class="font-h2 text-2xl md:text-3xl text-primary dark:text-white">${translatedCat}</h2>
-                        <div class="h-[1px] flex-grow bg-slate-200 dark:bg-white/10"></div>
+                    <div class="flex items-center justify-between gap-2 mb-8">
+                        <h2 class="font-h2 text-2xl md:text-3xl text-primary dark:text-white whitespace-nowrap">${translatedCat}</h2>
+                        <div class="h-[1px] flex-grow bg-slate-200 dark:bg-white/10 mx-2"></div>
+                        ${swipeIndicator}
                     </div>
                     <div class="flex overflow-x-auto pb-8 -mx-6 px-6 md:mx-0 md:px-0 scroll-smooth snap-x snap-mandatory no-scrollbar md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                         ${items.map(item => `

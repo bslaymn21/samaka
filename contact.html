@@ -51,7 +51,7 @@
     <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-white/10 docked full-width top-0 sticky z-50 transition-colors h-20">
         <div class="flex justify-between items-center w-full px-6 py-4 mx-auto max-w-container-max relative h-full">
             <a href="index.html" class="flex items-center absolute start-6 top-1/2 -translate-y-1/2 z-10">
-                <img src="./assets/only logo.png" alt="Samaka" class="h-16 md:h-28 w-auto">
+                <img src="./assets/only logo.png" alt="Samaka" class="h-20 md:h-28 w-auto">
             </a>
             <div class="flex-1"></div>
             <nav class="hidden md:flex gap-md items-center">
@@ -168,14 +168,17 @@
                         class="inline-block bg-primary dark:bg-white text-white dark:text-primary px-8 py-4 rounded-xl font-bold tracking-widest hover:bg-secondary dark:hover:bg-slate-200 transition-all shadow-lg"
                         data-i18n="contact_address">GET DIRECTIONS</a>
                 </div>
-                <div
-                    class="w-full md:w-64 aspect-square rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-800 relative group">
-                    <img src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=2066&auto=format&fit=crop"
-                        class="w-full h-full object-cover opacity-50 group-hover:scale-110 transition-transform duration-700">
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-4xl text-primary dark:text-white">map</span>
+                <a id="map-image-link" href="https://maps.google.com/?q=Alexandria+Bahari+Seafood" target="_blank"
+                    class="block w-full md:w-64 aspect-square rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-800 relative group shadow-lg cursor-pointer">
+                    <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
+                        src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=Alexandria%20Bahari&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
+                        class="pointer-events-none w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80" style="border:0;"></iframe>
+                    <div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors flex items-center justify-center">
+                        <div class="bg-white p-3 rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-transform delay-75">
+                             <span class="material-symbols-outlined text-3xl text-blue-600" style="font-variation-settings: 'FILL' 1;">my_location</span>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
 
             <!-- Hours & Social Card Stack -->
@@ -296,7 +299,30 @@
 
             if (settings.mapLink) {
                  const mapLink = document.getElementById('map-link');
+                 const mapImageLink = document.getElementById('map-image-link');
                  if (mapLink) mapLink.href = settings.mapLink;
+                 if (mapImageLink) mapImageLink.href = settings.mapLink;
+            }
+
+            // Dynamically update the embedded iframe map to reflect the address or link
+            const iframe = document.querySelector('#map-image-link iframe');
+            let mapQuery = settings.address_ar || settings.address_en || "Alexandria";
+            
+            if (settings.mapLink) {
+                 try {
+                     if (settings.mapLink.includes('@')) {
+                         const match = settings.mapLink.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+                         if (match) mapQuery = `${match[1]},${match[2]}`;
+                     } else if (settings.mapLink.includes('q=')) {
+                         const urlObj = new URL(settings.mapLink);
+                         const qParam = urlObj.searchParams.get('q');
+                         if (qParam) mapQuery = qParam;
+                     }
+                 } catch(e) { }
+            }
+
+            if (iframe) {
+                 iframe.src = `https://maps.google.com/maps?width=100%25&height=600&hl=en&q=${encodeURIComponent(mapQuery)}&t=&z=14&ie=UTF8&iwloc=B&output=embed`;
             }
         }
     </script>

@@ -336,11 +336,12 @@ html.dark .refractive-border {
 /* Ken Burns Effect */
 @keyframes ken-burns {
     0% { transform: scale(1); }
-    100% { transform: scale(1.1) translate(1%, 1%); }
+    100% { transform: scale(1.06) translate(1%, 1%); }
 }
 
 .animate-ken-burns {
     animation: ken-burns 20s ease-in-out infinite alternate;
+    will-change: transform;
 }
 
 /* Ordering System Enhancements */
@@ -487,7 +488,7 @@ html[dir="rtl"] .cart-drawer {
 /* Floating Action Button (Mobile) */
 .mobile-cart-btn {
     position: fixed;
-    bottom: 24px;
+    bottom: 90px; /* Moved up to clear the bottom navigation bar */
     right: 24px;
     z-index: 90;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -672,19 +673,27 @@ html.dark .preloader-bubbles {
 
 .option-chip:hover {
     transform: translateY(-2px);
-    border-color: var(--secondary);
-    color: var(--secondary);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border-color: #15C05A;
+    color: #15C05A;
+    box-shadow: 0 4px 12px rgba(21, 192, 90, 0.05);
+}
+
+.dark .option-chip:hover {
+    border-color: #ffb59c;
+    color: #ffb59c;
 }
 
 .option-chip.active {
-    background: var(--secondary);
-    border-color: var(--secondary);
+    background: #15C05A;
+    border-color: #15C05A;
     color: white;
-    box-shadow: 0 8px 20px rgba(255, 127, 80, 0.3); /* Coral shadow */
+    box-shadow: 0 8px 20px rgba(21, 192, 90, 0.3);
 }
 
 .dark .option-chip.active {
+    background: #ffb59c;
+    border-color: #ffb59c;
+    color: #5c1a00;
     box-shadow: 0 8px 20px rgba(255, 127, 80, 0.2);
 }
 
