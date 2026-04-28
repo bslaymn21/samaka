@@ -1,0 +1,357 @@
+/**
+ * Database Services for Samaka (Fetching & Uploading Data)
+ */
+
+import { db } from './config.js';
+import {
+    collection,
+    addDoc,
+    getDocs,
+    query,
+    orderBy,
+    doc,
+    getDoc,
+    setDoc,
+    updateDoc,
+    deleteDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+// --- MENU ---
+
+/**
+ * Fetch all menu items
+ */
+export async function getMenuItems() {
+    try {
+        const querySnapshot = await getDocs(collection(db, "menu"));
+        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error("Error getting menu items: ", error);
+        return []; // Fallback to empty
+    }
+}
+
+/**
+ * Add or update a menu item
+ */
+export async function saveMenuItem(itemData) {
+    try {
+        if (itemData.id && typeof itemData.id === 'string') {
+            const docRef = doc(db, "menu", itemData.id);
+            await setDoc(docRef, itemData, { merge: true });
+            return itemData.id;
+        } else {
+            const docRef = await addDoc(collection(db, "menu"), itemData);
+            return docRef.id;
+        }
+    } catch (error) {
+        console.error("Error saving menu item: ", error);
+        throw error;
+    }
+}
+
+/**
+ * Delete a menu item
+ */
+export async function deleteMenuItem(id) {
+    try {
+        await deleteDoc(doc(db, "menu", id));
+    } catch (error) {
+        console.error("Error deleting item: ", error);
+        throw error;
+    }
+}
+// --- CATEGORIES ---
+
+/**
+ * Fetch all categories
+ */
+export async function getCategories() {
+    try {
+        const querySnapshot = await getDocs(collection(db, "categories"));
+        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error("Error getting categories: ", error);
+        return [];
+    }
+}
+
+/**
+ * Add or update a category
+ */
+export async function saveCategory(categoryData) {
+    try {
+        if (categoryData.id) {
+            const docRef = doc(db, "categories", categoryData.id);
+            await setDoc(docRef, categoryData, { merge: true });
+            return categoryData.id;
+        } else {
+            const docRef = await addDoc(collection(db, "categories"), categoryData);
+            return docRef.id;
+        }
+    } catch (error) {
+        console.error("Error saving category: ", error);
+        throw error;
+    }
+}
+
+/**
+ * Delete a category
+ */
+export async function deleteCategory(id) {
+    try {
+        await deleteDoc(doc(db, "categories", id));
+    } catch (error) {
+        console.error("Error deleting category: ", error);
+        throw error;
+    }
+}
+// --- ORDERS ---
+
+/**
+ * Upload a new order
+ */
+export async function addOrder(orderData) {
+    try {
+        const docRef = await addDoc(collection(db, "orders"), {
+            ...orderData,
+            createdAt: new Date().toISOString()
+        });
+        return docRef.id;
+    } catch (error) {
+        console.error("Error adding order: ", error);
+        throw error;
+    }
+}
+
+// --- SETTINGS ---
+
+/**
+ * Fetch global site settings
+ */
+export async function getGlobalSettings() {
+    try {
+        const docRef = doc(db, "settings", "business");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            return docSnap.data();
+        }
+        return null;
+    } catch (error) {
+        console.error("Error getting settings: ", error);
+        return null;
+    }
+}
+
+/**
+ * Update global site settings
+ */
+export async function updateGlobalSettings(settingsData) {
+    try {
+        const docRef = doc(db, "settings", "business");
+        await setDoc(docRef, settingsData, { merge: true });
+    } catch (error) {
+        console.error("Error updating settings: ", error);
+        throw error;
+    }
+}
+// --- STATS & ANALYTICS ---
+
+/**
+ * Increment site visitors for today
+ */
+export async function trackVisitor() {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        const docRef = doc(db, "stats", "visitors_" + today);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            await updateDoc(docRef, { count: (docSnap.data().count || 0) + 1 });
+        } else {
+            await setDoc(docRef, { count: 1, date: today });
+        }
+    } catch (error) {
+        console.error("Error tracking visitor: ", error);
+    }
+}
+
+/**
+ * Get total visitors for today
+ */
+export async function getTodayVisitors() {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        const docRef = doc(db, "stats", "visitors_" + today);
+        const docSnap = await getDoc(docRef);
+        return docSnap.exists() ? docSnap.data().count : 0;
+    } catch (error) {
+        return 0;
+    }
+}
+
+/**
+ * Track successful WhatsApp order sent
+ */
+export async function trackWhatsAppOrder() {
+    try {
+        const docRef = doc(db, "stats", "conversions");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            await updateDoc(docRef, { whatsappSent: (docSnap.data().whatsappSent || 0) + 1 });
+        } else {
+            await setDoc(docRef, { whatsappSent: 1 });
+        }
+    } catch (error) {
+        console.error("Error tracking WhatsApp order: ", error);
+    }
+}
+
+/**
+ * Get total WhatsApp conversions
+ */
+export async function getWhatsAppConversions() {
+    try {
+        const docRef = doc(db, "stats", "conversions");
+        const docSnap = await getDoc(docRef);
+        return docSnap.exists() ? docSnap.data().whatsappSent : 0;
+    } catch (error) {
+        return 0;
+    }
+}
+
+/**
+ * Track QR Code Scan
+ */
+export async function trackQRScan() {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        const docRef = doc(db, "stats", "qr_scans_" + today);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            await updateDoc(docRef, { count: (docSnap.data().count || 0) + 1 });
+        } else {
+            await setDoc(docRef, { count: 1 });
+        }
+    } catch (error) {
+        console.error("Error tracking QR scan: ", error);
+    }
+}
+
+/**
+ * Get Today's QR Scans
+ */
+export async function getQRScans() {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        const docRef = doc(db, "stats", "qr_scans_" + today);
+        const docSnap = await getDoc(docRef);
+        return docSnap.exists() ? docSnap.data().count : 0;
+    } catch (error) {
+        return 0;
+    }
+}
+
+// --- FEEDBACK & COMMENTS ---
+
+/**
+ * Save user feedback
+ */
+export async function saveFeedback(feedbackData) {
+    try {
+        await addDoc(collection(db, "feedback"), {
+            ...feedbackData,
+            createdAt: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error("Error saving feedback: ", error);
+        throw error;
+    }
+}
+
+/**
+ * Get all feedback
+ */
+export async function getAllFeedback() {
+    try {
+        const q = query(collection(db, "feedback"), orderBy("createdAt", "desc"));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error("Error getting feedback: ", error);
+        return [];
+    }
+}
+
+/**
+ * Update feedback visibility
+ */
+export async function updateFeedbackStatus(feedbackId, showOnHome) {
+    try {
+        const docRef = doc(db, "feedback", feedbackId);
+        await updateDoc(docRef, { showOnHome: showOnHome });
+    } catch (error) {
+        console.error("Error updating feedback status: ", error);
+        throw error;
+    }
+}
+
+// --- ORDERS ---
+
+/**
+ * Save a new order to Firestore
+ */
+export async function saveOrder(orderData) {
+    try {
+        const docRef = await addDoc(collection(db, "orders"), {
+            ...orderData,
+            createdAt: new Date().toISOString(),
+            status: 'pending'
+        });
+        return docRef.id;
+    } catch (error) {
+        console.error("Error saving order: ", error);
+        throw error;
+    }
+}
+
+/**
+ * Fetch all orders for admin
+ */
+export async function getOrders() {
+    try {
+        const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error("Error getting orders: ", error);
+        return [];
+    }
+}
+
+/**
+ * Update order status
+ */
+export async function updateOrderStatus(orderId, newStatus) {
+    try {
+        const docRef = doc(db, "orders", orderId);
+        await updateDoc(docRef, { status: newStatus });
+        return true;
+    } catch (error) {
+        console.error("Error updating order: ", error);
+        return false;
+    }
+}
+
+/**
+ * Delete an order
+ */
+export async function deleteOrder(orderId) {
+    try {
+        await deleteDoc(doc(db, "orders", orderId));
+        return true;
+    } catch (error) {
+        console.error("Error deleting order: ", error);
+        return false;
+    }
+}

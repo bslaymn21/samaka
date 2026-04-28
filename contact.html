@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html class="light" lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="description"
+        content="Contact SAMAKA seafood restaurant in Alexandria. Mobile-first support via WhatsApp, click-to-call, and directions to our sea-view location." />
+    <meta name="keywords" content="Samaka contact, Seafood restaurant phone Alexandria, Directions to Samaka" />
+    <title>سمكة | اتصل بنا</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&amp;family=Work+Sans:wght@400;500;600&amp;family=Noto+Kufi+Arabic:wght@400;700&amp;family=Noto+Sans+Arabic:wght@400;700&amp;display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="./js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="./css/styles.css">
+
+    <!-- Translation & Theme System -->
+    <script src="./js/translations.js"></script>
+    <script src="./js/language-selector.js"></script>
+    <script src="./js/theme-manager.js"></script>
+    <script src="./js/preloader.js"></script>
+    <script src="./js/data.js"></script>
+</head>
+
+<body class="font-body-md text-on-surface dark:bg-slate-950 dark:text-slate-200 antialiased transition-colors rtl-mode">
+    <!-- Preloader -->
+    <div id="site-preloader" class="preloader-container">
+        <div class="absolute inset-0 z-0 opacity-40 pointer-events-none preloader-gradient"></div>
+        <div class="relative flex flex-col items-center">
+            <div class="mb-lg">
+                <img src="./assets/only logo.png" alt="Samaka Logo"
+                    class="h-80 w-auto relative z-10 logo-primary-filter animate-swim animate-glow" loading="eager">
+            </div>
+        </div>
+        <div class="w-full text-center space-y-md">
+            <div class="hidden" data-i18n="loader_title">SAMAKA</div>
+            <p class="font-body-md text-sm text-slate-500 italic opacity-60" data-i18n="loader_desc">نجهز لك صيد اليوم
+                الطازج...</p>
+            <div class="preloader-progress mx-auto">
+                <div class="preloader-progress-bar animate-loading"></div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <!-- TopAppBar -->
+    <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-white/10 docked full-width top-0 sticky z-50 transition-colors h-20">
+        <div class="flex justify-between items-center w-full px-6 py-4 mx-auto max-w-container-max relative h-full">
+            <a href="index.html" class="flex items-center absolute start-6 top-1/2 -translate-y-1/2 z-10">
+                <img src="./assets/only logo.png" alt="Samaka" class="h-16 md:h-28 w-auto">
+            </a>
+            <div class="flex-1"></div>
+            <nav class="hidden md:flex gap-md items-center">
+                <a class="text-slate-500 dark:text-abyss-on-variant font-label-caps hover:text-secondary dark:hover:text-abyss-secondary transition-colors duration-200"
+                    href="index.html" data-i18n="nav_home">المنيو</a>
+                <a class="text-slate-500 dark:text-abyss-on-variant font-label-caps hover:text-secondary dark:hover:text-abyss-secondary transition-colors duration-200"
+                    href="about.html" data-i18n="nav_about">عنا</a>
+
+                <a class="text-primary dark:text-abyss-primary font-bold font-label-caps hover:text-secondary dark:hover:text-abyss-secondary transition-colors duration-200"
+                    href="contact.html" data-i18n="nav_contact">اتصل بنا</a>
+            </nav>
+            <div class="flex-1 flex justify-end items-center gap-3">
+                <button onclick="toggleLanguage()"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors flex items-center justify-center text-slate-500 dark:text-abyss-on-variant"
+                    title="Change Language">
+                    <span class="material-symbols-outlined">translate</span>
+                </button>
+                <button onclick="toggleTheme()"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors flex items-center justify-center text-slate-500 dark:text-abyss-on-variant"
+                    title="Toggle Theme">
+                    <span class="material-symbols-outlined theme-icon">dark_mode</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-xl pb-32">
+        <!-- Hero -->
+        <div class="mb-16 text-center animate-fade-in">
+            <h1 class="font-h1 text-4xl md:text-6xl text-primary dark:text-white mb-6" data-i18n="contact_title">اتصل
+                بنا</h1>
+            <p class="font-body-lg text-lg md:text-xl text-slate-500 dark:text-abyss-on-variant max-w-2xl mx-auto"
+                data-i18n="contact_subtitle">يسعدنا تواصلك معنا. يمكنك الوصول إلينا عبر القنوات الموضحة أدناه.</p>
+        </div>
+
+        <!-- Primary Actions: Phone & WhatsApp -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <!-- WhatsApp Card (High Conversion) -->
+            <div
+                class="group relative bg-white dark:bg-abyss-container p-8 rounded-3xl border border-slate-200 dark:border-white/10 shadow-xl overflow-hidden transition-all hover:-translate-y-2">
+                <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                    <span class="material-symbols-outlined text-8xl">chat</span>
+                </div>
+                <div class="flex flex-col items-center text-center relative z-10">
+                    <div
+                        class="w-16 h-16 whatsapp-gradient text-white rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-green-500/20">
+                        <span class="material-symbols-outlined text-4xl"
+                            style="font-variation-settings: 'FILL' 1;">chat</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-primary dark:text-white mb-2" data-i18n="contact_whatsapp_title">
+                        راسلنا عبر واتساب</h3>
+                    <p class="text-sm text-green-600 dark:text-green-400 font-bold mb-8 flex items-center gap-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        <span data-i18n="contact_trust_signal">نرد خلال دقائق</span>
+                    </p>
+                    <a href="#" id="wa-contact-link" target="_blank"
+                        class="w-full bg-slate-900 dark:bg-white text-white dark:text-primary py-4 rounded-2xl font-bold tracking-widest hover:bg-secondary dark:hover:bg-abyss-secondary transition-all text-center"
+                        data-i18n="contact_whatsapp_btn">ابدأ المحادثة</a>
+                </div>
+            </div>
+
+            <!-- Phone Card -->
+            <div
+                class="group relative bg-white dark:bg-abyss-container p-8 rounded-3xl border border-slate-200 dark:border-white/10 shadow-xl overflow-hidden transition-all hover:-translate-y-2">
+                <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                    <span class="material-symbols-outlined text-8xl">call</span>
+                </div>
+                <div class="flex flex-col items-center text-center relative z-10">
+                    <div
+                        class="w-16 h-16 bg-blue-50 dark:bg-blue-400/10 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-500/10">
+                        <span class="material-symbols-outlined text-4xl"
+                            style="font-variation-settings: 'FILL' 1;">call</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-primary dark:text-white mb-2" data-i18n="contact_phone">Let's
+                        Talk</h3>
+                    <p class="text-sm text-slate-400 font-bold mb-8" data-i18n="admin_stat_operational">All systems
+                        operational</p>
+
+                    <div class="w-full space-y-4">
+                        <a id="display-phone-link" href="tel:+201012345678"
+                            class="flex items-center justify-between p-4 bg-slate-50 dark:bg-white/5 rounded-2xl hover:bg-blue-50 dark:hover:bg-white/10 transition-colors group/link">
+                            <div class="text-start">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest"
+                                    data-i18n="contact_phone_main">Main Line</p>
+                                <p id="display-phone" class="text-lg font-black dark:text-white" data-i18n="contact_phone_number_1">+20 10
+                                    1234 5678</p>
+                            </div>
+                            <span
+                                class="material-symbols-outlined text-blue-500 opacity-0 group-hover/link:opacity-100 transition-opacity">north_east</span>
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Info Grid: Address, Hours, Socials -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Address & Directions -->
+            <div
+                class="md:col-span-2 bg-slate-50 dark:bg-white/5 rounded-3xl p-8 flex flex-col md:flex-row gap-8 items-center border border-slate-200 dark:border-white/5">
+                <div class="flex-grow space-y-6 text-center md:text-start">
+                    <h3 class="text-2xl font-bold text-primary dark:text-white" data-i18n="contact_address">Visit Us
+                    </h3>
+                    <div
+                        class="flex items-start gap-4 text-slate-600 dark:text-slate-400 justify-center md:justify-start">
+                        <span class="material-symbols-outlined text-secondary mt-1">location_on</span>
+                        <p class="text-lg leading-relaxed" id="display-address" data-i18n="contact_address_detail">
+                            Alexandria - Bahari District - Near the Harbor</p>
+                    </div>
+                    <a id="map-link" href="https://maps.google.com/?q=Alexandria+Bahari+Seafood" target="_blank"
+                        class="inline-block bg-primary dark:bg-white text-white dark:text-primary px-8 py-4 rounded-xl font-bold tracking-widest hover:bg-secondary dark:hover:bg-slate-200 transition-all shadow-lg"
+                        data-i18n="contact_address">GET DIRECTIONS</a>
+                </div>
+                <div
+                    class="w-full md:w-64 aspect-square rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-800 relative group">
+                    <img src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=2066&auto=format&fit=crop"
+                        class="w-full h-full object-cover opacity-50 group-hover:scale-110 transition-transform duration-700">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-4xl text-primary dark:text-white">map</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hours & Social Card Stack -->
+            <div class="space-y-8">
+                <!-- Hours -->
+                <div
+                    class="bg-white dark:bg-abyss-container p-8 rounded-3xl border border-slate-200 dark:border-white/10">
+                    <h4 class="text-lg font-bold text-primary dark:text-white mb-6 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-secondary">schedule</span>
+                        <span data-i18n="contact_hours">Opening Hours</span>
+                    </h4>
+                    <div class="space-y-4 text-sm">
+                        <div class="flex flex-col gap-2">
+                            <div class="flex justify-between border-b border-slate-50 dark:border-white/5 pb-2">
+                                <span class="text-slate-500" data-i18n="contact_hours">Hours</span>
+                                <span class="font-bold dark:text-white" id="display-hours">12 PM - 12 AM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer
+        class="bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 full-width py-12 transition-colors">
+        <div class="flex flex-col items-center gap-6 px-6 max-w-7xl mx-auto text-center">
+            <span class="font-bold text-[#003366] dark:text-blue-100 font-h1 text-2xl tracking-widest"
+                data-i18n="brand_name">SAMAKA</span>
+        </div>
+    </footer>
+
+    <!-- Bottom Nav -->
+    <nav
+        class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center bg-white dark:bg-slate-900 px-2 pb-safe border-t border-slate-200 dark:border-slate-800 z-50 h-16">
+        <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="index.html">
+            <span class="material-symbols-outlined">restaurant_menu</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']"
+                data-i18n="nav_menu">Menu</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="about.html">
+            <span class="material-symbols-outlined">info</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']"
+                data-i18n="nav_about">About</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-primary dark:text-abyss-primary border-t-2 border-primary dark:border-abyss-primary pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="contact.html">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">location_on</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']"
+                data-i18n="nav_contact">Contact</span>
+        </a>
+    </nav>
+
+    <script type="module">
+        import { getGlobalSettings } from './database/services.js';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const currentLang = localStorage.getItem('preferred_language') || 'ar';
+            if (typeof applyLanguage === 'function') applyLanguage(currentLang);
+
+            // Initial view from cache (fast)
+            updateContactUI();
+
+            // Background sync (live)
+            try {
+                const liveSettings = await getGlobalSettings();
+                if (liveSettings) {
+                    localStorage.setItem('samaka_settings', JSON.stringify(liveSettings));
+                    updateContactUI(); // Refresh UI with live data
+                }
+            } catch (e) {
+                console.log("Settings sync failed");
+            }
+        });
+
+        // Real-time synchronization
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'samaka_settings') {
+                updateContactUI();
+            }
+        });
+
+        function updateContactUI() {
+            const raw = localStorage.getItem('samaka_settings');
+            if (!raw) return;
+            const settings = JSON.parse(raw);
+            const currentLang = localStorage.getItem('preferred_language') || 'ar';
+
+            console.log("Contact Page Updating with:", settings);
+
+            const waLink = document.getElementById('wa-contact-link');
+            if (waLink && settings.whatsapp) {
+                 const num = settings.whatsapp;
+                 waLink.href = `https://wa.me/${num}`;
+            }
+
+            const address = currentLang === 'ar' ? settings.address_ar : (settings.address_en || settings.address_ar);
+            const hours = currentLang === 'ar' ? (settings.hours_ar || "12 ظهراً - 12 منصف الليل") : (settings.hours_en || "12 PM - 12 AM");
+
+            if (document.getElementById('display-address') && address) {
+                document.getElementById('display-address').innerText = address;
+            }
+            if (document.getElementById('display-hours') && hours) {
+                document.getElementById('display-hours').innerText = hours;
+            }
+
+            if (settings.phone) {
+                const phoneDisplay = document.getElementById('display-phone');
+                const phoneLink = document.getElementById('display-phone-link');
+                if (phoneDisplay) phoneDisplay.innerText = settings.phone;
+                if (phoneLink) phoneLink.href = `tel:${settings.phone}`;
+            }
+
+            if (settings.mapLink) {
+                 const mapLink = document.getElementById('map-link');
+                 if (mapLink) mapLink.href = settings.mapLink;
+            }
+        }
+    </script>
+</body>
+
+</html>

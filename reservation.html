@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html class="light" lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="description"
+        content="Book your table at MATAMKOM seafood restaurant. Instant reservation confirmation and premium seating options for an unforgettable dining experience." />
+    <meta name="keywords" content="Table Reservation Alexandria, Book Fish Restaurant, Seafood Dining Reservation" />
+    <title>سمكة | احجز طاولتك</title>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&amp;family=Work+Sans:wght@400;600&amp;family=Noto+Kufi+Arabic:wght@400;700&amp;family=Noto+Sans+Arabic:wght@400;700&amp;display=swap"
+        rel="stylesheet" />
+
+    <!-- Material Symbols -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <!-- Shared Configuration & Styles -->
+    <script src="./js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="./css/styles.css">
+
+    <!-- Translation & Theme System -->
+    <script src="./js/translations.js"></script>
+    <script src="./js/language-selector.js"></script>
+    <script src="./js/theme-manager.js"></script>
+    <script src="./js/preloader.js"></script>
+    <script src="./js/data.js"></script>
+</head>
+
+<body
+    class="font-body-md text-on-background bg-surface-bright dark:bg-slate-950 transition-colors selection:bg-primary-container selection:text-white rtl-mode">
+    <!-- Preloader -->
+    <div id="site-preloader" class="preloader-container">
+        <div class="absolute inset-0 z-0 opacity-40 pointer-events-none preloader-gradient"></div>
+        <div class="relative flex flex-col items-center">
+            <div class="mb-lg">
+                <img src="./assets/only logo.png" alt="Samaka Logo"
+                    class="h-80 w-auto relative z-10 logo-primary-filter animate-swim animate-glow" loading="eager">
+            </div>
+        </div>
+        <div class="w-full text-center space-y-md">
+            <div class="hidden" data-i18n="loader_title">SAMAKA</div>
+            <p class="font-body-md text-sm text-slate-500 italic opacity-60" data-i18n="loader_desc">نجهز لك صيد اليوم
+                الطازج...</p>
+            <div class="preloader-progress mx-auto">
+                <div class="preloader-progress-bar animate-loading"></div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <!-- TopAppBar -->
+    <header
+        class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-white/10 docked full-width top-0 sticky z-50 transition-colors h-20">
+        <div class="flex justify-between items-center w-full px-6 py-4 mx-auto max-w-container-max relative h-full">
+            <a href="index.html" class="flex items-center absolute start-6 top-1/2 -translate-y-1/2 z-10">
+                <img src="./assets/only logo.png" alt="Samaka" class="h-16 md:h-28 w-auto">
+            </a>
+            <div class="flex-1"></div>
+            <nav class="hidden md:flex gap-md items-center">
+                <a class="text-slate-500 dark:text-abyss-on-variant font-h3 text-sm tracking-tight transition-colors duration-200 hover:text-secondary dark:hover:text-abyss-secondary"
+                    href="index.html" data-i18n="nav_home">المنيو</a>
+                <a class="text-slate-500 dark:text-abyss-on-variant font-h3 text-sm tracking-tight transition-colors duration-200 hover:text-secondary dark:hover:text-abyss-secondary"
+                    href="about.html" data-i18n="nav_about">عنا</a>
+                <a class="text-primary dark:text-abyss-primary font-bold font-h3 text-sm tracking-tight transition-colors duration-200 hover:text-secondary dark:hover:text-abyss-secondary"
+                    href="reservation.html" data-i18n="nav_orders">حجز طاولة</a>
+                <a class="text-slate-500 dark:text-abyss-on-variant font-h3 text-sm tracking-tight transition-colors duration-200 hover:text-secondary dark:hover:text-abyss-secondary"
+                    href="contact.html" data-i18n="nav_contact">اتصل بنا</a>
+            </nav>
+            <div class="flex-1 flex justify-end items-center gap-3">
+                <button onclick="toggleLanguage()"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors flex items-center justify-center text-slate-500 dark:text-abyss-on-variant"
+                    title="Change Language">
+                    <span class="material-symbols-outlined">translate</span>
+                </button>
+                <button onclick="toggleTheme()"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors flex items-center justify-center text-slate-500 dark:text-abyss-on-variant"
+                    title="Toggle Theme">
+                    <span class="material-symbols-outlined theme-icon">dark_mode</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="min-h-screen pt-24 pb-20">
+        <!-- Hero Section -->
+        <section class="max-w-4xl mx-auto px-6 text-center mb-16">
+            <h1 class="text-5xl md:text-7xl font-h1 text-primary dark:text-white mb-6 uppercase tracking-tighter"
+                data-i18n="res_title">حجز طاولتك</h1>
+            <p class="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed"
+                data-i18n="res_desc">انضم إلينا في رحلة طهي لا تُنسى. احجز مكانك الآن في صالة الطعام.</p>
+        </section>
+
+        <!-- Reservation Form Section -->
+        <section class="max-w-4xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+            <!-- Left: Form -->
+            <div id="reservation-form-container"
+                class="lg:col-span-2 glass-surface p-8 md:p-12 border border-slate-200 dark:border-white/10 shadow-2xl relative overflow-hidden rounded-3xl">
+                <!-- Success Message -->
+                <div id="success-state"
+                    class="hidden absolute inset-0 bg-white dark:bg-slate-900 z-50 flex flex-col items-center justify-center text-center p-8 animate-fade-in">
+                    <div
+                        class="w-20 h-20 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mb-6 shadow-lg">
+                        <span class="material-symbols-outlined text-4xl">verified</span>
+                    </div>
+                    <h2 class="text-3xl font-h1 text-primary dark:text-white mb-4 uppercase"
+                        data-i18n="res_success_title">Reservation Sent!</h2>
+                    <p class="text-slate-500 dark:text-slate-400 mb-10 text-lg" data-i18n="res_success_desc">We will
+                        confirm your table via WhatsApp or call within 5-10 minutes.</p>
+
+                    <div class="flex flex-col gap-4 w-full max-w-xs mx-auto">
+                        <a href="#" id="wa-followup-link" target="_blank"
+                            class="bg-green-600 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-green-700 transition-all shadow-xl">
+                            <span class="material-symbols-outlined text-2xl">chat</span>
+                            <span data-i18n="res_wa_btn">Follow up on WhatsApp</span>
+                        </a>
+                        <button onclick="window.location.href='index.html'"
+                            class="text-slate-400 hover:text-primary dark:hover:text-white font-bold tracking-widest text-sm transition-colors py-4">BACK
+                            TO HOME</button>
+                    </div>
+                </div>
+
+                <form id="reservation-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Full Name -->
+                        <div class="md:col-span-2">
+                            <label class="block text-[10px] font-black tracking-widest text-slate-400 uppercase mb-2"
+                                data-i18n="res_label_name">Full Name</label>
+                            <input type="text" id="res-name" required
+                                class="w-full bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 p-4 text-primary dark:text-white focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all outline-none rounded-xl" />
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="md:col-span-1">
+                            <label class="block text-[10px] font-black tracking-widest text-slate-400 uppercase mb-2"
+                                data-i18n="res_label_phone">Phone Number</label>
+                            <input type="tel" id="res-phone" required placeholder="01XXXXXXXXX"
+                                class="w-full bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 p-4 text-primary dark:text-white focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all outline-none rounded-xl" />
+                        </div>
+
+                        <!-- Guests -->
+                        <div class="md:col-span-1">
+                            <label class="block text-[10px] font-black tracking-widest text-slate-400 uppercase mb-2"
+                                data-i18n="res_label_guests">Number of Guests</label>
+                            <select id="res-guests" required
+                                class="w-full bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 p-4 text-primary dark:text-white focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all outline-none rounded-xl">
+                                <option value="1">1 Person</option>
+                                <option value="2">2 People</option>
+                                <option value="3">3 People</option>
+                                <option value="4">4 People</option>
+                                <option value="5">5 People</option>
+                                <option value="6">6 People</option>
+                                <option value="7+">7+ People</option>
+                            </select>
+                        </div>
+
+                        <!-- Date/Time Picker -->
+                        <div class="md:col-span-1">
+                            <label class="block text-[10px] font-black tracking-widest text-slate-400 uppercase mb-2"
+                                data-i18n="res_label_datetime">Date & Time</label>
+                            <input type="datetime-local" id="res-datetime" required
+                                class="w-full bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 p-4 text-primary dark:text-white focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all outline-none rounded-xl" />
+                            <p class="mt-2 text-[10px] text-slate-400" data-i18n="res_duration_info">Duration: 2 hours
+                            </p>
+                        </div>
+
+                        <!-- Seating Type -->
+                        <div class="md:col-span-1">
+                            <label class="block text-[10px] font-black tracking-widest text-slate-400 uppercase mb-2"
+                                data-i18n="res_label_seating">Seating Preference</label>
+                            <select id="res-seating" required
+                                class="w-full bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 p-4 text-primary dark:text-white focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all outline-none rounded-xl">
+                                <option value="Indoor" data-i18n="res_seating_indoor">Indoor Dining</option>
+                                <option value="Outdoor" data-i18n="res_seating_outdoor">Outdoor Terrace</option>
+                                <option value="Premium View" data-i18n="res_seating_premium">Premium View</option>
+                            </select>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="md:col-span-2">
+                            <label class="block text-[10px] font-black tracking-widest text-slate-400 uppercase mb-2"
+                                data-i18n="res_label_special">Special Requests</label>
+                            <span id="display-phone-link" class="hidden"></span>
+                            <span id="display-phone-number" class="hidden"></span>
+                            <span id="display-wa-link" class="hidden"></span>
+                            <textarea id="res-notes"
+                                class="w-full bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 p-4 min-h-[80px] text-primary dark:text-white focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all outline-none rounded-xl"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 flex flex-col gap-4">
+                        <button type="submit"
+                            class="w-full bg-primary dark:bg-white text-white dark:text-primary py-5 px-8 font-black tracking-[0.2em] hover:bg-secondary dark:hover:bg-abyss-primary dark:hover:text-white transition-all shadow-2xl shadow-primary/20 rounded-2xl"
+                            id="submit-btn" data-i18n="res_btn_submit">تأكيد الحجز</button>
+
+                        <a href="menu.html"
+                            class="w-full text-center py-4 text-sm font-bold text-slate-400 hover:text-secondary transition-all"
+                            data-i18n="res_alt_cta">Don't want to reserve? Order now</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Right: Info & Trust -->
+            <div class="space-y-8">
+                <!-- Trust Card -->
+                <div
+                    class="bg-white dark:bg-abyss-container p-8 rounded-3xl border border-slate-200 dark:border-white/10 shadow-xl">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div
+                            class="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-2xl">verified_user</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-black text-primary dark:text-white uppercase tracking-tighter"
+                                data-i18n="res_trust_signal">Over 100 successful bookings daily</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">We respect your time and commitment. Our table
+                        allocation is precise and automated for your convenience.</p>
+                </div>
+
+                <!-- Quick Contact Card -->
+                <div
+                    class="bg-primary dark:bg-abyss-surface p-8 rounded-3xl border border-white/5 shadow-2xl text-white">
+                    <h4 class="text-lg font-bold mb-6" data-i18n="res_quick_contact">Fast inquiry? Call or message us
+                    </h4>
+                    <div class="space-y-4">
+                        <a href="tel:+201012345678" id="display-phone-link-card"
+                            class="flex items-center gap-4 p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors">
+                            <span class="material-symbols-outlined text-secondary">call</span>
+                            <span class="font-bold" id="display-phone-number-card">+20 10 1234 5678</span>
+                        </a>
+                        <a href="#" id="display-wa-link-card" target="_blank"
+                            class="flex items-center gap-4 p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors">
+                            <span class="material-symbols-outlined text-green-400">chat</span>
+                            <span class="font-bold">WhatsApp Chat</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { addReservation } from './database/services.js';
+        document.getElementById('reservation-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'جاري الإرسال...';
+
+            const name = document.getElementById('res-name').value;
+            const phone = document.getElementById('res-phone').value;
+            const datetimeInput = document.getElementById('res-datetime').value;
+            const guests = document.getElementById('res-guests').value;
+            const seating = document.getElementById('res-seating').value;
+            const notes = document.getElementById('res-notes').value;
+
+            // Simple Validation for working hours (12 PM - 12 AM)
+            const dt = new Date(datetimeInput);
+            const hours = dt.getHours();
+
+            if (hours < 12 && hours >= 0) {
+                const currentLang = localStorage.getItem('preferred_language') || 'en';
+                alert(translations[currentLang].res_invalid_time || "Please choose a time between 12 PM and 12 AM");
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'تأكيد الحجز';
+                return;
+            }
+
+            const bookingData = {
+                name: name,
+                phone: phone,
+                guests: guests,
+                dateTime: datetimeInput,
+                seating: seating,
+                notes: notes,
+                status: 'pending'
+            };
+
+            try {
+                // Save to Firebase using the Service
+                await addReservation(bookingData);
+                console.log("Reservation saved to Firestore via Service");
+
+                // Also save to local logs for Admin (Legacy compatibility)
+                const logs = JSON.parse(localStorage.getItem('matamkom_reservations_logs') || '[]');
+                logs.push({ id: 'RES-' + Date.now(), ...bookingData, timestamp: new Date().toISOString() });
+                localStorage.setItem('matamkom_reservations_logs', JSON.stringify(logs));
+
+                // Format Arabic Message
+                const message = `🔔 *حجز جديد من الموقع*%0A
+👤 *الاسم:* ${name}
+📱 *رقم الهاتف:* ${phone}
+👥 *عدد الأفراد:* ${guests}
+📅 *التاريخ والوقت:* ${datetimeInput.replace('T', ' ')}
+🪑 *تفضيل الجلوس:* ${seating}
+📝 *ملاحظات:* ${notes || 'لا يوجد'}`;
+
+                const waLink = getWhatsAppLink(message);
+                document.getElementById('wa-followup-link').href = waLink;
+                document.getElementById('success-state').classList.remove('hidden');
+
+                setTimeout(() => {
+                    window.open(waLink, '_blank');
+                }, 1000);
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                alert("حدث خطأ أثناء الحجز، يرجى المحاولة لاحقاً.");
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'تأكيد الحجز';
+            }
+        });
+
+        // Min Date Restriction: Today + 1 Hour
+        const now = new Date();
+        now.setHours(now.getHours() + 1);
+        const minDateTime = now.toISOString().slice(0, 16);
+        document.getElementById('res-datetime').min = minDateTime;
+
+        // Initialize language and theme
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentLang = localStorage.getItem('preferred_language') || 'ar';
+            applyLanguage(currentLang);
+
+            // Dynamic Settings Sync
+            const settings = JSON.parse(localStorage.getItem('samaka_settings') || '{}');
+            const waLinkRoot = getWhatsAppLink();
+            if (document.getElementById('display-wa-link-card')) document.getElementById('display-wa-link-card').href = waLinkRoot;
+
+            const whatsapp = settings.whatsapp || '201012345678';
+            if (document.getElementById('display-phone-link-card')) document.getElementById('display-phone-link-card').href = `tel:+${whatsapp}`;
+            if (document.getElementById('display-phone-number-card')) document.getElementById('display-phone-number-card').innerText = `+${whatsapp}`;
+        });
+
+    </script>
+
+    <!-- Footer -->
+    <footer
+        class="bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 py-12 full-width transition-colors">
+        <div class="flex flex-col items-center gap-6 px-6 max-w-7xl mx-auto">
+            <span class="font-bold text-primary dark:text-blue-100 tracking-widest font-h1 text-2xl"
+                data-i18n="brand_name">SAMAKA</span>
+        </div>
+    </footer>
+
+    <!-- Bottom Nav -->
+    <nav
+        class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center bg-white dark:bg-slate-900 px-2 pb-safe border-t border-slate-200 dark:border-slate-800 z-50 h-16">
+        <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="index.html">
+            <span class="material-symbols-outlined">restaurant_menu</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']"
+                data-i18n="nav_menu">Menu</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="about.html">
+            <span class="material-symbols-outlined">info</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']"
+                data-i18n="nav_about">About</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="contact.html">
+            <span class="material-symbols-outlined">location_on</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']"
+                data-i18n="nav_contact">Contact</span>
+        </a>
+    </nav>
+</body>
+
+</html>

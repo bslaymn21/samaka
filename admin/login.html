@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SAMAKA | Admin Login</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&family=Work+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .login-glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glow-button {
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-slate-950 flex items-center justify-center min-h-screen p-6 selection:bg-secondary selection:text-white">
+    <!-- Animatedbg -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div
+            class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 blur-[120px] rounded-full animate-pulse">
+        </div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/10 blur-[120px] rounded-full animate-pulse"
+            style="animation-delay: 2s"></div>
+    </div>
+
+    <div class="w-full max-w-md relative z-10">
+        <div class="login-glass rounded-[40px] overflow-hidden shadow-2xl p-8 md:p-12 text-center">
+            <div class="mb-10">
+                <img src="../assets/only logo.png" alt="Samaka Logo" class="h-32 w-auto mx-auto mb-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                <h1 class="text-white text-3xl font-black tracking-widest font-h1 uppercase mb-2">SAMAKA</h1>
+                <p class="text-slate-500 text-[10px] font-bold uppercase tracking-[0.4em]">ADMINISTRATION SYSTEM</p>
+            </div>
+
+            <form id="login-form" class="space-y-6 text-left">
+                <div class="space-y-2">
+                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest pl-2">Access
+                        Key</label>
+                    <div class="relative">
+                        <span
+                            class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-xl">vpn_key</span>
+                        <input type="password" id="password" required placeholder="••••••••"
+                            class="w-full pl-12 pr-6 py-5 bg-white/5 border border-white/10 rounded-2xl focus:border-secondary focus:ring-0 transition-all text-white outline-none">
+                    </div>
+                    <p class="text-[9px] text-slate-500 text-center mt-2 italic">Hint: use <span
+                            class="text-secondary font-bold">admin123</span> to unlock</p>
+                </div>
+
+                <div id="error-msg" class="hidden animate-shake">
+                    <div
+                        class="bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold p-4 rounded-xl flex items-center gap-3">
+                        <span class="material-symbols-outlined text-sm">error</span>
+                        Invalid key. Authorization denied.
+                    </div>
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-secondary py-5 rounded-2xl text-white font-black tracking-[0.2em] uppercase glow-button hover:scale-[1.02] active:scale-95 transition-all shadow-xl">
+                    Authenticate
+                </button>
+            </form>
+
+            <div class="mt-12 pt-8 border-t border-white/5">
+                <a href="../index.html"
+                    class="text-slate-500 hover:text-white text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-sm">arrow_back</span>
+                    Return to public site
+                </a>
+            </div>
+
+            <p class="text-slate-600 text-[9px] font-bold uppercase tracking-tighter mt-8">
+                &copy; 2026 SAMAKA OS &bull; V1.2.0 • GLOBAL SECURE SYSTEM
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const pass = document.getElementById('password').value;
+            const error = document.getElementById('error-msg');
+
+            if (pass === 'admin123') {
+                sessionStorage.setItem('admin_authenticated', 'true');
+                // Simple entry animation before redirect
+                document.querySelector('.login-glass').style.transform = 'scale(0.95)';
+                document.querySelector('.login-glass').style.opacity = '0';
+                document.querySelector('.login-glass').style.transition = 'all 0.5s ease';
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 500);
+            } else {
+                error.classList.remove('hidden');
+                document.getElementById('password').value = '';
+                // Shake effect on the container
+                const container = document.querySelector('.login-glass');
+                container.style.animation = 'none';
+                void container.offsetWidth;
+                container.style.animation = 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both';
+            }
+        });
+    </script>
+    <style>
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-1px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(2px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-4px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(4px, 0, 0);
+            }
+        }
+    </style>
+</body>
+
+</html>

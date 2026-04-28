@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html class="light" lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="description"
+        content="استمتع بأشهى المأكولات البحرية المتوسطية في سمكة بالإسكندرية. سمك مشوي عالي الجودة، أطباق متنوعة، وإطلالة مميزة." />
+    <meta name="keywords" content="سمك الإسكندرية، سمك مشوي، مأكولات بحرية طازجة، مطعم سمكة، مأكولات متوسطية" />
+    <title>سمكة | صيد اليوم الطازج</title>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&amp;family=Work+Sans:wght@400;600&amp;family=Noto+Kufi+Arabic:wght@400;700&amp;family=Noto+Sans+Arabic:wght@400;700&amp;display=swap"
+        rel="stylesheet" />
+
+    <!-- Material Symbols -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <!-- Shared Configuration & Styles -->
+    <script src="./js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="./css/styles.css">
+
+    <!-- Translation & Theme System -->
+    <script src="./js/translations.js"></script>
+    <script src="./js/language-selector.js"></script>
+    <script src="./js/theme-manager.js"></script>
+    <script src="./js/preloader.js"></script>
+    <script src="./js/data.js"></script>
+</head>
+
+<body class="font-body-md text-on-surface rtl-mode">
+    <!-- Preloader -->
+    <div id="site-preloader" class="preloader-container">
+        <div class="absolute inset-0 z-0 opacity-40 pointer-events-none preloader-gradient"></div>
+        <div class="relative z-10 flex flex-col items-center">
+            <div class="mb-lg animate-swim">
+                <div class="animate-glow">
+                    <svg class="text-primary" fill="none" height="120" viewBox="0 0 200 100" width="180"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path class="fish-body"
+                            d="M10 50C10 50 40 10 90 10C140 10 180 50 180 50C180 50 140 90 90 90C40 90 10 50 10 50Z"
+                            stroke="currentColor" stroke-width="2"></path>
+                        <path class="animate-tail" d="M10 50L-20 20V80L10 50Z" fill="currentColor" opacity="0.6"></path>
+                        <circle cx="150" cy="45" fill="currentColor" r="3"></circle>
+                        <path class="animate-fin" d="M90 35C90 35 110 20 120 35" stroke="currentColor"
+                            stroke-linecap="round" stroke-width="2"></path>
+                        <path class="animate-fin" d="M90 65C90 65 110 80 120 65" stroke="currentColor"
+                            stroke-linecap="round" stroke-width="2"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="mb-lg">
+                <img src="./assets/logo color.png" alt="Samaka Logo" class="h-24 w-auto block dark:hidden animate-fade-in">
+                <img src="./assets/logo withe.png" alt="Samaka Logo" class="h-24 w-auto hidden dark:block animate-fade-in">
+            </div>
+            <div class="w-full text-center space-y-md">
+                <div class="hidden" data-i18n="loader_title">SAMAKA</div>
+                <p class="font-body-md text-sm text-slate-500 italic opacity-60" data-i18n="loader_desc">نجهز لك صيد
+                    اليوم الطازج...</p>
+                <div class="preloader-progress mx-auto">
+                    <div class="preloader-progress-bar animate-loading"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TopAppBar -->
+    <header
+        class="glass-surface border-b border-slate-200 dark:border-white/10 docked full-width top-0 sticky z-50 transition-colors">
+        <div class="flex justify-between items-center w-full px-6 py-4 mx-auto max-w-container-max">
+            <div class="flex items-center gap-3">
+                <img src="./assets/logo color.png" alt="Samaka" class="h-10 w-auto bg-white rounded-lg p-1">
+                <span class="text-xl font-black italic tracking-tighter text-primary dark:text-abyss-primary font-h1"
+                    data-i18n="brand_name">سمكة</span>
+            </div>
+            <nav class="hidden md:flex gap-md items-center">
+                <a class="text-primary dark:text-abyss-primary font-bold font-h3 text-sm tracking-tight transition-colors duration-200 hover:text-secondary dark:hover:text-abyss-secondary"
+                    href="index.html" data-i18n="nav_home">الرئيسية</a>
+                <a class="text-slate-500 dark:text-abyss-on-variant font-h3 text-sm tracking-tight transition-colors duration-200 hover:text-secondary dark:hover:text-abyss-secondary"
+                    href="menu.html" data-i18n="nav_menu">المنيو</a>
+
+                <a class="text-slate-500 dark:text-abyss-on-variant font-h3 text-sm tracking-tight transition-colors duration-200 hover:text-secondary dark:hover:text-abyss-secondary"
+                    href="contact.html" data-i18n="nav_contact">اتصل بنا</a>
+            </nav>
+            <div class="flex items-center gap-3">
+                <button onclick="toggleLanguage()"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors flex items-center justify-center text-slate-500 dark:text-abyss-on-variant"
+                    title="تغيير اللغة">
+                    <span class="material-symbols-outlined">translate</span>
+                </button>
+                <button id="theme-toggle"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors flex items-center justify-center text-slate-500 dark:text-abyss-on-variant"
+                    data-i18n-title="theme_toggle_dark">
+                    <span class="material-symbols-outlined">dark_mode</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="relative w-full h-[520px] flex items-center overflow-hidden">
+            <div class="absolute inset-0 z-0 h-full w-full">
+                <!-- Latest User Uploaded Video Hero -->
+                <video autoplay loop muted playsinline class="w-full h-full object-cover animate-ken-burns opacity-70">
+                    <source src="./assets/WhatsApp Video 2026-04-26 at 11.37.30 PM.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div
+                    class="absolute inset-0 bg-gradient-to-r rtl:bg-gradient-to-l from-abyss-surface/90 via-abyss-surface/60 to-transparent">
+                </div>
+            </div>
+            <div class="relative z-10 container mx-auto px-6 md:px-xl">
+                <div class="max-w-2xl space-y-lg text-right">
+                    <div
+                        class="inline-flex items-center gap-3 px-5 py-2 bg-black/40 backdrop-blur-md border border-white/10 rounded-full shadow-lg">
+                        <span
+                            class="font-label-caps text-white text-[10px] md:text-xs tracking-[0.2em] uppercase font-bold"
+                            data-i18n="hero_tagline">صيد محلي يومي</span>
+                    </div>
+                    <h1 class="font-h1 text-h1 text-white leading-[1.0] lg:text-[72px]" data-i18n="hero_title">صيد اليوم
+                        <br />الطازج</h1>
+                    <p class="font-body-lg text-body-lg text-white/90 max-w-lg" data-i18n="hero_desc">من أمواج الصباح
+                        إلى مائدتك. استمتع بأفضل المأكولات البحرية المصرية، المحضرة حسب ذوقك الخاص.</p>
+                    <div class="pt-4 flex flex-wrap gap-4">
+                        <a href="menu.html"
+                            class="bg-secondary text-white px-8 md:px-10 py-4 font-label-caps tracking-[0.2em] hover:bg-primary inline-block shadow-lg rounded-full transition-all text-sm md:text-base text-center"
+                            data-i18n="btn_order_now">اطلب الآن</a>
+                        <a href="menu.html"
+                            class="bg-primary text-white px-8 md:px-10 py-4 font-label-caps tracking-[0.2em] hover:bg-secondary inline-block shadow-lg rounded-full transition-all text-sm md:text-base text-center"
+                            data-i18n="nav_menu">المنيو الخاص بنا</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <script>
+            function quickAdd(id) {
+                localStorage.setItem('pending_add_to_cart', id);
+                window.location.href = 'menu.html';
+            }
+        </script>
+
+        <!-- Signature Bento Grid -->
+        <section class="py-xl bg-white dark:bg-abyss-surface transition-colors">
+            <div class="container mx-auto px-6 md:px-xl">
+                <div class="text-center mb-xl">
+                    <h3 class="font-label-caps text-on-tertiary-container dark:text-abyss-primary opacity-80 mb-4"
+                        data-i18n="home_seasonal_favorites">ترشيحاتنا لك</h3>
+                    <h2 class="font-h2 text-headline-lg text-primary dark:text-white" data-i18n="home_from_kitchen">
+                        أطباقنا المميزة</h2>
+                </div>
+            </div>
+
+            <!-- Dynamic Seafood Marquee -->
+            <div class="marquee-container" id="home-marquee-container">
+                <div class="marquee-track" id="dynamic-marquee-track">
+                    <div class="px-10 py-20 text-center w-full text-slate-400 font-bold italic" data-i18n="loading_marquee">جاري تحميل أفضل الأطباق...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Choose Us -->
+        <section class="py-xl bg-slate-50 dark:bg-slate-900 transition-colors">
+            <div class="container mx-auto px-6">
+                <h2 class="font-h2 text-h2 text-center text-primary dark:text-white mb-xl" data-i18n="why_title">Why
+                    Choose Samaka?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+                    <div
+                        class="flex flex-col items-center text-center p-8 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+                        <div class="value-icon"><span class="material-symbols-outlined">set_meal</span></div>
+                        <h3 class="font-bold text-xl mb-2 text-primary dark:text-white" data-i18n="why_fresh_title">سمك
+                            طازجة يومياً</h3>
+                        <p class="text-slate-500 dark:text-slate-400" data-i18n="why_fresh_desc">بننقي السمك بنفسنا كل
+                            يوم الصبح.</p>
+                    </div>
+                    <div
+                        class="flex flex-col items-center text-center p-8 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+                        <div class="value-icon"><span class="material-symbols-outlined">restaurant</span></div>
+                        <h3 class="font-bold text-xl mb-2 text-primary dark:text-white" data-i18n="why_custom_title">
+                            تجهيز حسب طلبك</h3>
+                        <p class="text-slate-500 dark:text-slate-400" data-i18n="why_custom_desc">مشوي، مقلي، أو سنجاري.
+                        </p>
+                    </div>
+                    <div
+                        class="flex flex-col items-center text-center p-8 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+                        <div class="value-icon"><span class="material-symbols-outlined">delivery_dining</span></div>
+                        <h3 class="font-bold text-xl mb-2 text-primary dark:text-white" data-i18n="why_speed_title">
+                            توصيل سريع</h3>
+                        <p class="text-slate-500 dark:text-slate-400" data-i18n="why_speed_desc">طلبك هيوصلك سخن وطازة
+                            لحد باب البيت.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Conversion Banner -->
+        <section class="py-12 px-6">
+            <div class="conversion-banner shadow-2xl overflow-hidden relative">
+                <div class="relative z-10">
+                    <h2 class="text-4xl font-bold mb-4" data-i18n="menu_cta_title">تحب تاكل إيه النهارده؟</h2>
+                    <p class="text-xl mb-10 opacity-90" data-i18n="menu_cta_desc">تقدر تختار كل اللي نفسك فيه من المنيو
+                        بتاعنا دلوقتي</p>
+                    <a href="menu.html"
+                        class="bg-white text-primary px-10 py-5 rounded-full font-bold text-xl hover:scale-105 transition-transform inline-block shadow-xl">
+                        <span class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-2xl">restaurant_menu</span>
+                            <span data-i18n="btn_view_menu">تصفح المنيو واطلب الآن</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reviews Section -->
+        <section class="py-xl bg-surface transition-colors">
+            <div class="container mx-auto px-6">
+                <h2 class="font-h2 text-h2 text-center text-primary dark:text-white mb-xl" data-i18n="reviews_title">
+                    What Our Customers Say</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="review-card">
+                        <div class="star-rating">⭐⭐⭐⭐⭐</div>
+                        <p class="text-slate-700 dark:text-slate-300 italic mb-4" data-i18n="review_1_text">"أفضل مطعم
+                            سمك جربته! السمك طازة جداً والتتبيلة تحفة."</p>
+                        <p class="font-bold text-sm text-primary dark:text-secondary">— أحمد محمد</p>
+                    </div>
+                    <div class="review-card">
+                        <div class="star-rating">⭐⭐⭐⭐⭐</div>
+                        <p class="text-slate-700 dark:text-slate-300 italic mb-4" data-i18n="review_2_text">"توصيل سريع
+                            وأكل يفتح النفس. بجد تسلم إيديكم."</p>
+                        <p class="font-bold text-sm text-primary dark:text-secondary">— مريم علي</p>
+                    </div>
+                    <div class="review-card">
+                        <div class="star-rating">⭐⭐⭐⭐⭐</div>
+                        <p class="text-slate-700 dark:text-slate-300 italic mb-4" data-i18n="review_3_text">"طعم أصلي
+                            وخدمة ممتازة، فعلاً وجهة مثالية لعشاق السمك."</p>
+                        <p class="font-bold text-sm text-primary dark:text-secondary">— هاني يوسف</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Story Section -->
+        <section class="py-xl bg-surface">
+            <div class="container mx-auto px-6 md:px-xl">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-lg items-center">
+                    <div class="lg:col-span-5 space-y-md text-right">
+                        <h2 class="font-h2 text-h2 text-primary border-s-4 border-secondary ps-6"
+                            data-i18n="story_title">قصتنا</h2>
+                        <p class="font-body-lg text-xl text-slate-700 dark:text-white italic leading-relaxed"
+                            data-i18n="story_quote">"سر السمك الحلو في بساطته ونضافته."</p>
+                        <p class="font-body-md text-lg text-slate-600 dark:text-slate-200 leading-relaxed"
+                            data-i18n="story_desc_1">في سمكة، بنفخر إننا نكون وجهتكم الأولى لعشاق السمك والفسفور.
+                            بدأنا برؤية بسيطة: نوصل صيد اليوم الطازج لمائدتكم بالنفس المصري الأصيل اللي بتحبوه.</p>
+                        <p class="font-body-md text-lg text-slate-600 dark:text-slate-200 leading-relaxed"
+                            data-i18n="story_desc_2">الجودة هي أساس كل حاجة بنعملها. سواء كنت بتنورنا في المطعم مع عيلتك
+                            أو بتطلب أونلاين لغدوة رايقة، بنضمن لك خدمة احترافية وطعم يعكس أصول الأكل البحري المصري.</p>
+                        <div class="pt-base">
+                            <a class="font-label-caps text-secondary border-b-2 border-secondary pb-1 hover:text-primary-container hover:border-primary-container transition-colors"
+                                href="menu.html" data-i18n="btn_story_menu">تصفح المنيو الكامل</a>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-7 grid grid-cols-2 gap-4">
+                        <div class="space-y-4">
+                            <img alt="Fishing boat" class="w-full aspect-[4/5] object-cover border border-slate-200 rounded-2xl shadow-sm"
+                                src="./assets/WhatsApp Image 2026-04-26 at 11.49.00 PM.jpeg" />
+                            <img alt="Fresh oysters" class="w-full aspect-square object-cover border border-slate-200 rounded-2xl shadow-sm"
+                                src="./assets/WhatsApp Image 2026-04-26 at 11.49.02 PM.jpeg" />
+                        </div>
+                        <div class="pt-xl space-y-4">
+                            <img alt="Chef preparing fish"
+                                class="w-full aspect-[4/6] object-cover border border-slate-200 shadow-xl rounded-2xl"
+                                src="./assets/WhatsApp Image 2026-04-26 at 11.49.03 PM.jpeg" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 full-width py-12">
+        <div class="flex flex-col items-center gap-6 px-6 max-w-7xl mx-auto text-center">
+            <span class="font-bold text-[#003366] dark:text-blue-100 font-h1 text-2xl tracking-widest"
+                data-i18n="brand_name">سمكة</span>
+        </div>
+    </footer>
+    <script type="module">
+        import { getMenuItems, getGlobalSettings } from './database/services.js';
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const liveData = await getMenuItems();
+                if (liveData && liveData.length > 0) {
+                    localStorage.setItem('samaka_menu', JSON.stringify(liveData));
+                    renderDynamicMarquee(liveData);
+                }
+                const liveSettings = await getGlobalSettings();
+                if (liveSettings) {
+                    localStorage.setItem('samaka_settings', JSON.stringify(liveSettings));
+                }
+            } catch (e) {
+                console.log("Firebase sync failed");
+                const cached = JSON.parse(localStorage.getItem('samaka_menu') || '[]');
+                if(cached.length > 0) renderDynamicMarquee(cached);
+            }
+        });
+
+        function renderDynamicMarquee(items) {
+            const track = document.getElementById('dynamic-marquee-track');
+            if(!track) return;
+
+            // Filter items that should be shown on home page
+            const homeItems = items.filter(item => item.showOnHome);
+            
+            if(homeItems.length === 0) {
+                track.innerHTML = '<div class="px-10 py-20 text-center w-full text-slate-400 font-bold italic" data-i18n="no_marquee_items">اكتشف منيو سمكة الجديد بالكامل</div>';
+                return;
+            }
+
+            // Create Marquee Item HTML
+            const createItemHtml = (item) => `
+                <div class="marquee-item group">
+                    <img alt="${item.name_ar}" class="w-full h-full object-cover" 
+                         src="${item.images && item.images.length > 0 ? item.images[0] : item.image}" />
+                    <span class="price-badge">${item.price} <span data-i18n="price_currency">EGP</span></span>
+                    <button onclick="quickAdd('${item.id}')" class="quick-add-btn" data-i18n="btn_add_to_order">أضف للطلب</button>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
+                        <h4 class="text-white font-bold text-lg">${item.name_ar}</h4>
+                    </div>
+                </div>
+            `;
+
+            // Duplicate items for continuous loop
+            const itemsHtml = homeItems.map(createItemHtml).join('');
+            track.innerHTML = itemsHtml + itemsHtml;
+        }
+
+        window.goToMenuWithCart = () => {
+            localStorage.setItem('open_cart_on_load', 'true');
+            window.location.href = 'menu.html';
+        };
+    </script>
+
+    <!-- BottomNavBar (Mobile Only) -->
+    <nav
+        class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center bg-white dark:bg-slate-900 px-2 pb-safe border-t border-slate-200 dark:border-slate-800 z-50 h-16">
+        <a class="flex flex-col items-center justify-center text-primary dark:text-abyss-primary border-t-2 border-primary dark:border-abyss-primary pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="index.html">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']"
+                data-i18n="nav_home">Home</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="menu.html">
+            <span class="material-symbols-outlined">restaurant_menu</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']"
+                data-i18n="nav_menu">Menu</span>
+        </a>
+
+        <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="contact.html">
+            <span class="material-symbols-outlined">location_on</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']"
+                data-i18n="nav_contact">Contact</span>
+        </a>
+    </nav>
+</body>
+
+</html>

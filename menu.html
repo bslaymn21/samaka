@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html class="light" lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="description"
+        content="Explore our menu of premium Mediterranean seafood. From grilled sea bass to King salmon and grand seafood platters at SAMAKA." />
+    <meta name="keywords"
+        content="Seafood Menu, Grilled Fish Alexandria, Salmon Steak, Seafood Platters, Fresh Fish Menu" />
+    <title>سمكة | المنيو</title>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&amp;family=Work+Sans:wght@400;500;600&amp;display=swap"
+        rel="stylesheet" />
+
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <!-- Shared Configuration & Styles -->
+    <script src="./js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="./css/styles.css">
+
+    <!-- Translation & Theme System -->
+    <script src="./js/translations.js"></script>
+    <script src="./js/language-selector.js"></script>
+    <script src="./js/theme-manager.js"></script>
+    <script src="./js/preloader.js"></script>
+
+    <style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .option-chip {
+            user-select: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body class="font-body-md text-on-surface rtl-mode">
+    <!-- Preloader -->
+    <div id="site-preloader" class="preloader-container">
+        <div class="absolute inset-0 z-0 opacity-40 pointer-events-none preloader-gradient"></div>
+        <div class="relative z-10 flex flex-col items-center">
+            <div class="mb-lg">
+                <img src="./assets/only logo.png" alt="Samaka Logo"
+                    class="h-80 w-auto relative z-10 logo-primary-filter animate-swim animate-glow" loading="eager">
+            </div>
+            <div class="w-full text-center space-y-md">
+                <div class="hidden" data-i18n="loader_title">SAMAKA</div>
+                <p class="font-body-md text-sm text-slate-500 italic opacity-60" data-i18n="loader_desc"></p>
+                <div class="preloader-progress mx-auto">
+                    <div class="preloader-progress-bar animate-loading"></div>
+                </div>
+            </div>
+    </div>
+    <header
+        class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-white/10 docked full-width top-0 sticky z-50 transition-colors h-16 md:h-20">
+        <div class="flex justify-between items-center w-full px-6 py-4 mx-auto max-w-container-max relative h-full">
+            <a href="index.html" class="flex items-center absolute start-6 top-1/2 -translate-y-1/2 z-10">
+                <img src="./assets/only logo.png" alt="Samaka" class="h-16 md:h-28 w-auto">
+            </a>
+            <div class="flex-1"></div>
+            <nav class="hidden md:flex gap-md items-center">
+                <a class="text-primary dark:text-abyss-primary font-bold font-h3 text-sm tracking-tight transition-colors duration-200 hover:text-secondary dark:hover:text-abyss-secondary"
+                    href="index.html" data-i18n="nav_home">الرئيسية</a>
+                <a class="text-slate-500 dark:text-abyss-on-variant font-bold font-h3 text-sm tracking-tight transition-colors duration-200 hover:text-secondary dark:hover:text-abyss-secondary"
+                    href="menu.html" data-i18n="nav_menu">المنيو</a>
+
+                <a class="text-slate-500 dark:text-abyss-on-variant font-h3 text-sm tracking-tight transition-colors duration-200 hover:text-secondary dark:hover:text-abyss-secondary"
+                    href="contact.html" data-i18n="nav_contact">اتصل بنا</a>
+            </nav>
+            <div class="flex-1 flex justify-end items-center gap-3">
+                <button onclick="toggleTheme()"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors flex items-center justify-center text-slate-500 dark:text-abyss-on-variant"
+                    title="Toggle Theme">
+                    <span class="material-symbols-outlined theme-icon">dark_mode</span>
+                </button>
+
+                <button onclick="toggleLanguage()"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors flex items-center justify-center text-slate-500 dark:text-abyss-on-variant"
+                    title="Change Language">
+                    <span class="material-symbols-outlined">translate</span>
+                </button>
+                <!-- Desktop Cart -->
+                <button onclick="toggleCart()"
+                    class="hidden md:flex relative p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors items-center justify-center text-slate-500 dark:text-abyss-on-variant">
+                    <span class="material-symbols-outlined">shopping_basket</span>
+                    <span id="cart-badge"
+                        class="absolute -top-1 -right-1 bg-secondary text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 hidden">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-xl pb-32">
+        <!-- Hero Section -->
+        <div
+            class="relative overflow-hidden mb-xl rounded-3xl min-h-[300px] md:min-h-[400px] flex items-center px-8 md:px-16 shadow-2xl">
+            <div class="absolute inset-0 z-0">
+                <img id="menu-hero-img" class="w-full h-full object-cover animate-ken-burns"
+                    src="./assets/first size.png">
+                <div class="absolute inset-0 bg-black/60 dark:bg-black/80"></div>
+                <div
+                    class="absolute inset-0 bg-gradient-to-r rtl:bg-gradient-to-l from-black/60 via-transparent to-transparent">
+                </div>
+            </div>
+            <div class="relative z-10 max-w-2xl text-start">
+                <h1 class="font-h1 text-4xl md:text-6xl text-white mb-base" data-i18n="menu_title">قائمة الطعام</h1>
+            </div>
+        </div>
+
+        <!-- Filter Chips -->
+        <div id="filter-container"
+            class="flex justify-start gap-4 overflow-x-auto pb-6 no-scrollbar mb-10 border-b border-slate-100 dark:border-white/5">
+            <button onclick="applyFilter('all', this)"
+                class="active-filter px-8 py-3 rounded-full font-bold whitespace-nowrap shadow-sm transition-all"
+                data-i18n="filter_all">All</button>
+            <button onclick="applyFilter('Starters', this)"
+                class="bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-white px-8 py-3 rounded-full font-bold whitespace-nowrap hover:bg-slate-200 transition-all"
+                data-i18n="filter_starters">Starters</button>
+            <button onclick="applyFilter('Main Course', this)"
+                class="bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-white px-8 py-3 rounded-full font-bold whitespace-nowrap hover:bg-slate-200 transition-all"
+                data-i18n="filter_mains">Mains</button>
+            <button onclick="applyFilter('Platters', this)"
+                class="bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-white px-8 py-3 rounded-full font-bold whitespace-nowrap hover:bg-slate-200 transition-all"
+                data-i18n="filter_platters">Platters</button>
+        </div>
+
+        <!-- Menu Container -->
+        <div id="menu-container" class="space-y-16">
+            <!-- Dynamic Sections -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="hidden text-center py-20 px-10">
+            <span class="material-symbols-outlined text-6xl text-slate-300 mb-4">search_off</span>
+            <h3 class="text-2xl font-bold text-slate-400" data-i18n="no_items_found">No items found</h3>
+        </div>
+    </main>
+
+    <!-- Cart Drawer -->
+    <div id="cart-overlay" onclick="toggleCart()"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] cart-overlay"></div>
+    <div id="cart-drawer" class="cart-drawer flex flex-col">
+        <div class="p-6 border-b border-slate-100 dark:border-white/10 flex justify-between items-center">
+            <h2 class="text-2xl font-bold text-primary dark:text-white" data-i18n="cart_title">Your Order</h2>
+            <button onclick="toggleCart()" class="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div id="cart-items" class="flex-grow overflow-y-auto p-6 space-y-4">
+            <!-- Cart items here -->
+        </div>
+        <div class="p-6 border-t border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-black/20">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-slate-500 font-bold" data-i18n="cart_total">Total</span>
+                <span id="cart-total-price" class="text-2xl font-bold text-secondary">0 ج.م</span>
+            </div>
+            <button onclick="sendWhatsAppOrder()"
+                class="w-full py-4 rounded-xl bg-[#25D366] text-white font-bold text-lg flex items-center justify-center gap-2 shadow-lg bioluminescent-glow transition-all active:scale-95">
+                <span class="material-symbols-outlined text-xl">send</span>
+                <span data-i18n="btn_send_order" class="text-sm md:text-lg">إرسال عبر واتساب</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Dish Modal -->
+    <div id="dish-modal" class="fixed inset-0 z-[100] modal-overlay items-center justify-center p-4">
+        <div class="absolute inset-0" onclick="closeModal()"></div>
+        <div
+            class="bg-white dark:bg-abyss-container w-full max-w-2xl rounded-[32px] shadow-3xl overflow-hidden relative z-10 modal-content">
+            <div id="modal-content-container">
+                <!-- Content injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Order Button -->
+    <div class="mobile-cart-btn">
+        <button onclick="toggleCart()"
+            class="relative w-16 h-16 bg-primary text-white rounded-full shadow-[0_8px_25px_rgba(0,0,0,0.3)] flex items-center justify-center transition-all active:scale-90 hover:scale-105 bioluminescent-glow">
+            <span class="material-symbols-outlined text-3xl">shopping_basket</span>
+            <span id="mobile-cart-count"
+                class="absolute -top-1 -right-1 bg-secondary text-white text-[10px] font-bold w-6 h-6 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 animate-pulse">0</span>
+        </button>
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav
+        class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center bg-white dark:bg-slate-900 px-2 pb-safe border-t border-slate-200 dark:border-slate-800 z-50 h-16">
+        <a class="flex flex-col items-center justify-center text-primary dark:text-abyss-primary border-t-2 border-primary dark:border-abyss-primary pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="index.html">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']"
+                data-i18n="nav_home">Home</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="index.html">
+            <span class="material-symbols-outlined">restaurant_menu</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']"
+                data-i18n="nav_menu">Menu</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="contact.html">
+            <span class="material-symbols-outlined">location_on</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']"
+                data-i18n="nav_contact">Contact</span>
+        </a>
+    </nav>
+
+    <script src="./js/data.js"></script>
+    <script type="module">
+        import { getMenuItems, getGlobalSettings } from './database/services.js';
+
+        let cart = [];
+        let currentFilter = 'all';
+        let selectedOptions = { method: 'Grilled', size: 'Medium' };
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Initial render with local data (fast)
+            renderMenu('all');
+            updateCartUI();
+
+            // Background sync with Firebase (live)
+            try {
+                const liveData = await getMenuItems();
+                if (liveData && liveData.length > 0) {
+                    localStorage.setItem('samaka_menu', JSON.stringify(liveData));
+                    renderMenu(currentFilter);
+                }
+
+                const liveSettings = await getGlobalSettings();
+                if (liveSettings) {
+                    localStorage.setItem('samaka_settings', JSON.stringify(liveSettings));
+                }
+            } catch (e) {
+                console.log("Firebase sync failed, using cache");
+            }
+        });
+
+        function renderMenu(filter) {
+            const data = getMenuData();
+            const container = document.getElementById('menu-container');
+            const emptyState = document.getElementById('empty-state');
+            container.innerHTML = '';
+
+            const categories = [...new Set(data.map(item => item.category))];
+            let hasResults = false;
+
+            categories.forEach(cat => {
+                if (filter !== 'all' && cat !== filter) return;
+
+                const items = data.filter(item => item.category === cat);
+                if (items.length === 0) return;
+                hasResults = true;
+
+                const section = document.createElement('section');
+                const currentLang = localStorage.getItem('preferred_language') || 'en';
+                const catKey = `filter_${cat.toLowerCase().replace(/\s+/g, '')}`;
+                const translatedCat = (translations[currentLang] && translations[currentLang][catKey]) || cat;
+
+                section.innerHTML = `
+                    <div class="flex items-center gap-base mb-8">
+                        <h2 class="font-h2 text-2xl md:text-3xl text-primary dark:text-white">${translatedCat}</h2>
+                        <div class="h-[1px] flex-grow bg-slate-200 dark:bg-white/10"></div>
+                    </div>
+                    <div class="flex overflow-x-auto pb-8 -mx-6 px-6 md:mx-0 md:px-0 scroll-smooth snap-x snap-mandatory no-scrollbar md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                        ${items.map(item => `
+                            <div class="w-[85vw] md:w-full flex-shrink-0 snap-center md:snap-align-none">
+                                ${createMenuItemHTML(item, currentLang)}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(section);
+            });
+
+            emptyState.classList.toggle('hidden', hasResults);
+        }
+
+        function createMenuItemHTML(item, lang) {
+            const name = lang === 'ar' ? item.name_ar : item.name;
+            const desc = lang === 'ar' ? item.description_ar : item.description;
+            const currency = translations[lang].price_currency;
+            const startsFrom = translations[lang].price_starting;
+            const orderedCountText = translations[lang].ordered_count.replace('{n}', item.timesOrdered || '100');
+
+            // Calculate discount percentage
+            let discountBadge = '';
+            if (item.oldPrice && item.oldPrice > item.price) {
+                const discount = Math.round(((item.oldPrice - item.price) / item.oldPrice) * 100);
+                discountBadge = `<span class="badge-tag bg-red-500 text-white border-none"><span class="material-symbols-outlined text-[12px]">sell</span> خصم ${discount}%</span>`;
+            }
+
+            return `
+                <div onclick="openModal(${item.id})" class="group relative flex flex-col bg-white dark:bg-abyss-container border border-slate-100 dark:border-white/5 rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:shadow-2xl hover:-translate-y-2">
+                    <!-- Badges -->
+                    <div class="absolute top-4 left-4 z-10 flex flex-col gap-2">
+                        ${discountBadge}
+                        ${item.isPopular ? `<span class="badge-tag badge-bestseller"><span class="material-symbols-outlined text-[12px]">star</span> ${translations[lang].tag_bestseller}</span>` : ''}
+                        ${item.isSpecial ? `<span class="badge-tag badge-special"><span class="material-symbols-outlined text-[12px]">local_fire_department</span> ${translations[lang].tag_special}</span>` : ''}
+                    </div>
+                    
+                    <div class="aspect-[4/3] overflow-hidden">
+                        <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="${item.images[0]}">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-h3 text-xl text-primary dark:text-white group-hover:text-secondary transition-colors">${name}</h3>
+                        </div>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 mb-4 h-10">${desc}</p>
+                        
+                        <div class="flex items-center gap-2 mb-6 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                            <span class="material-symbols-outlined text-[14px]">visibility</span>
+                            ${orderedCountText}
+                        </div>
+
+                        <div class="flex justify-between items-center mt-auto border-t border-slate-50 dark:border-white/5 pt-4">
+                            <div>
+                                <span class="text-[10px] block opacity-60 uppercase font-bold">${startsFrom}</span>
+                                ${item.oldPrice ? `<span class="text-xs text-slate-400 line-through mr-1">${item.oldPrice} ${currency}</span>` : ''}
+                                <span class="text-2xl font-black text-secondary">${item.price} <span class="text-sm font-bold">${currency}</span></span>
+                            </div>
+                            <button class="bg-primary hover:bg-secondary text-white px-5 py-3 rounded-2xl font-bold flex items-center gap-2 transition-all active:scale-95">
+                                <span class="material-symbols-outlined text-lg">add</span>
+                                <span class="text-sm" data-i18n="btn_add_order">${translations[lang].btn_add_order}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function applyFilter(cat, btn) {
+            currentFilter = cat;
+            document.querySelectorAll('#filter-container button').forEach(b => b.classList.remove('active-filter', 'bg-primary', 'text-white'));
+            document.querySelectorAll('#filter-container button').forEach(b => b.classList.add('bg-slate-100', 'dark:bg-white/5'));
+
+            btn.classList.add('active-filter');
+            btn.classList.remove('bg-slate-100', 'dark:bg-white/5');
+            renderMenu(cat);
+        }
+
+        function openModal(id) {
+            const data = getMenuData();
+            const item = data.find(i => i.id === id);
+            const currentLang = localStorage.getItem('preferred_language') || 'en';
+            const t = translations[currentLang];
+
+            selectedOptions = { method: t.method_grilled, size: t.size_medium };
+
+            const container = document.getElementById('modal-content-container');
+            container.innerHTML = `
+                <div class="flex flex-col md:flex-row min-h-[500px]">
+                    <!-- Image Gallery Slider -->
+                    <div class="md:w-[45%] relative h-64 md:h-auto overflow-hidden group/gallery">
+                         <div id="gallery-slider" class="flex w-full h-full overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar">
+                            ${item.images.map(img => `
+                                <div class="w-full h-full flex-shrink-0 snap-center">
+                                    <img class="w-full h-full object-cover" src="${img}">
+                                </div>
+                            `).join('')}
+                         </div>
+                         
+                         <!-- Navigation Buttons (Desktop) -->
+                         <div class="hidden md:flex absolute inset-0 items-center justify-between px-4 pointer-events-none">
+                            <button onclick="slideGallery(-1)" class="w-10 h-10 bg-black/40 text-white rounded-full flex items-center justify-center backdrop-blur-md pointer-events-auto opacity-0 group-hover/gallery:opacity-100 transition-opacity">
+                                <span class="material-symbols-outlined">chevron_right</span>
+                            </button>
+                            <button onclick="slideGallery(1)" class="w-10 h-10 bg-black/40 text-white rounded-full flex items-center justify-center backdrop-blur-md pointer-events-auto opacity-0 group-hover/gallery:opacity-100 transition-opacity">
+                                <span class="material-symbols-outlined">chevron_left</span>
+                            </button>
+                         </div>
+
+                         <!-- Mobile Swipe Hint -->
+                         <div class="md:hidden absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 transform scale-75">
+                            ${item.images.map((_, i) => `<div class="w-2 h-2 rounded-full bg-white/40"></div>`).join('')}
+                         </div>
+
+                         <button onclick="closeModal()" class="md:hidden absolute top-4 right-4 w-10 h-10 bg-black/40 text-white rounded-full flex items-center justify-center backdrop-blur-md">
+                            <span class="material-symbols-outlined">close</span>
+                         </button>
+                    </div>
+                    <!-- Details -->
+                    <div class="md:w-[55%] p-6 md:p-10 flex flex-col justify-between">
+                        <div>
+                             <div class="hidden md:flex justify-end mb-4">
+                                <button onclick="closeModal()" class="text-slate-400 hover:text-primary dark:hover:text-white transition-colors">
+                                    <span class="material-symbols-outlined">close</span>
+                                </button>
+                             </div>
+                             <h2 class="text-2xl md:text-3xl font-bold text-primary dark:text-white mb-2">${currentLang === 'ar' ? item.name_ar : item.name}</h2>
+                             <p class="text-sm text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">${currentLang === 'ar' ? item.description_ar : item.description}</p>
+                             
+                             <div class="space-y-6">
+                                <div>
+                                    <label class="block font-bold text-slate-400 text-[10px] mb-3 uppercase tracking-widest">${t.cooking_method}</label>
+                                    <div class="flex flex-wrap gap-2">
+                                        <div onclick="selectOption('method', '${t.method_grilled}', this)" class="option-chip active">${t.method_grilled}</div>
+                                        <div onclick="selectOption('method', '${t.method_fried}', this)" class="option-chip">${t.method_fried}</div>
+                                        <div onclick="selectOption('method', '${t.method_singari}', this)" class="option-chip">${t.method_singari}</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-400 text-[10px] mb-3 uppercase tracking-widest">${t.size}</label>
+                                    <div class="flex flex-wrap gap-2">
+                                        <div onclick="selectOption('size', '${t.size_small}', this)" class="option-chip">${t.size_small}</div>
+                                        <div onclick="selectOption('size', '${t.size_medium}', this)" class="option-chip active">${t.size_medium}</div>
+                                        <div onclick="selectOption('size', '${t.size_large}', this)" class="option-chip">${t.size_large}</div>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+
+                        <div class="mt-10 flex items-center justify-between gap-6 border-t border-slate-100 dark:border-white/5 pt-6">
+                            <span class="text-2xl font-black text-secondary">${item.price} ${t.price_currency}</span>
+                            <button onclick="addToOrder(${item.id})" class="flex-grow bg-primary py-4 rounded-xl text-white font-bold text-lg hover:bg-secondary transition-all active:scale-95 shadow-xl">
+                                ${t.btn_add_order}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('dish-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function selectOption(type, value, el) {
+            selectedOptions[type] = value;
+            el.parentElement.querySelectorAll('.option-chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('dish-modal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function slideGallery(direction) {
+            const slider = document.getElementById('gallery-slider');
+            const width = slider.offsetWidth;
+            slider.scrollBy({ left: direction * width, behavior: 'smooth' });
+        }
+
+        function addToOrder(id) {
+            const data = getMenuData();
+            const item = data.find(i => i.id === id);
+            const currentLang = localStorage.getItem('preferred_language') || 'en';
+
+            const cartItem = {
+                id: Date.now(), // unique instance in cart
+                dishId: item.id,
+                name: currentLang === 'ar' ? item.name_ar : item.name,
+                price: item.price,
+                options: { ...selectedOptions },
+                quantity: 1
+            };
+
+            cart.push(cartItem);
+            closeModal();
+            updateCartUI();
+            toggleCart(true);
+        }
+
+        function toggleCart(forceOpen = false) {
+            const drawer = document.getElementById('cart-drawer');
+            const overlay = document.getElementById('cart-overlay');
+            if (forceOpen) {
+                drawer.classList.add('open');
+                overlay.classList.add('active');
+            } else {
+                drawer.classList.toggle('open');
+                overlay.classList.toggle('active');
+            }
+        }
+
+        function updateCartUI() {
+            const itemsContainer = document.getElementById('cart-items');
+            const totalDisplay = document.getElementById('cart-total-price');
+            const badge = document.getElementById('cart-badge');
+            const mobileCount = document.getElementById('mobile-cart-count');
+            const currentLang = localStorage.getItem('preferred_language') || 'en';
+            const emptyMsg = translations[currentLang].cart_empty;
+
+            if (cart.length === 0) {
+                itemsContainer.innerHTML = `<div class="flex flex-col items-center justify-center h-48 opacity-40">
+                    <span class="material-symbols-outlined text-4xl mb-2">shopping_basket</span>
+                    <p class="font-bold">${emptyMsg}</p>
+                </div>`;
+                badge.classList.add('hidden');
+                mobileCount.innerText = '0';
+                totalDisplay.innerText = `0 ${translations[currentLang].price_currency}`;
+                return;
+            }
+
+            badge.classList.remove('hidden');
+            badge.innerText = cart.length;
+            mobileCount.innerText = cart.length;
+
+            itemsContainer.innerHTML = cart.map(item => `
+                <div class="flex gap-4 bg-slate-50 dark:bg-white/5 p-4 rounded-2xl border border-slate-100 dark:border-white/10">
+                    <div class="flex-grow">
+                        <h4 class="font-bold text-primary dark:text-white">${item.name}</h4>
+                        <p class="text-xs text-slate-500">${item.options.method} • ${item.options.size}</p>
+                        <span class="text-secondary font-black mt-2 block">${item.price} ${translations[currentLang].price_currency}</span>
+                    </div>
+                    <button onclick="removeFromCart(${item.id})" class="text-slate-300 hover:text-red-500 transition-colors">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+            `).join('');
+
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            totalDisplay.innerText = `${total} ${translations[currentLang].price_currency}`;
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(i => i.id !== id);
+            updateCartUI();
+        }
+
+        function sendWhatsAppOrder() {
+            if (cart.length === 0) return;
+
+            const currentLang = localStorage.getItem('preferred_language') || 'en';
+            const t = translations[currentLang];
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+
+            let message = `${t.order_msg_header}\n\n`;
+            message += `${t.order_msg_hello}\n\n`;
+
+            cart.forEach((item, index) => {
+                message += `${index + 1}. *${item.name}*\n`;
+                message += `   - ${t.cooking_method}: ${item.options.method}\n`;
+                message += `   - ${t.size}: ${item.options.size}\n`;
+                message += `   - ${t.admin_table_price}: ${item.price} ${t.price_currency}\n\n`;
+            });
+
+            message += `------------------\n`;
+            message += `*${t.cart_total}: ${total} ${t.price_currency}*`;
+
+            // Save to local logs for Admin
+            const orderData = {
+                id: 'ORD-' + Date.now(),
+                timestamp: new Date().toISOString(),
+                items: cart,
+                total: total,
+                status: 'pending'
+            };
+            const orders = JSON.parse(localStorage.getItem('matamkom_orders_logs') || '[]');
+            orders.push(orderData);
+            localStorage.setItem('matamkom_orders_logs', JSON.stringify(orders));
+
+            openWhatsApp(message);
+        }
+
+        // Global Exports
+        window.openModal = openModal;
+        window.closeModal = closeModal;
+        window.addToOrder = addToOrder;
+        window.selectOption = selectOption;
+        window.toggleCart = toggleCart;
+        window.applyFilter = applyFilter;
+        window.slideGallery = slideGallery;
+        window.sendWhatsAppOrder = sendWhatsAppOrder;
+    </script>
+
+    <!-- Footer -->
+    <footer
+        class="bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 full-width py-12 transition-colors mb-16 md:mb-0">
+        <div class="flex flex-col items-center gap-6 px-6 max-w-7xl mx-auto text-center">
+            <span class="font-bold text-primary dark:text-abyss-primary font-h1 text-2xl tracking-widest"
+                data-i18n="brand_name">SAMAKA</span>
+        </div>
+    </footer>
+</body>
+
+</html>
