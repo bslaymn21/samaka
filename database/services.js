@@ -69,7 +69,9 @@ export async function deleteMenuItem(id) {
 export async function getCategories() {
     try {
         const querySnapshot = await getDocs(collection(db, "categories"));
-        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const cats = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // Sort in memory so that categories without 'order' field still show up
+        return cats.sort((a, b) => (a.order || 0) - (b.order || 0));
     } catch (error) {
         console.error("Error getting categories: ", error);
         return [];
@@ -354,4 +356,48 @@ export async function deleteOrder(orderId) {
         console.error("Error deleting order: ", error);
         return false;
     }
+}
+/**
+ * Custom Admin Auth (Firestore based)
+ */
+export async function verifyAdmin(username, password) {
+    try {
+        const docRef = doc(db, "admins", username);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists() && docSnap.data().password === password) {
+            return docSnap.data();
+        }
+        return null;
+    } catch (error) {
+        console.error("Auth error:", error);
+        return null;
+    }
+}
+
+export async function updateAdminPassword(username, newPassword) {
+    try {
+        const docRef = doc(db, "admins", username);
+        await updateDoc(docRef, { password: newPassword });
+        return true;
+    } catch (error) {
+        // If doc doesn't exist, create it (fallback)
+        try {
+            const docRef = doc(db, "admins", username);
+            await setDoc(docRef, { username, password: newPassword });
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+}
+
+// Ensure the default admin exists
+export async function initAdminAccount() {
+    try {
+        const docRef = doc(db, "admins", "admin");
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) {
+            await setDoc(docRef, { username: "admin", password: "admin123" });
+        }
+    } catch (e) {}
 }

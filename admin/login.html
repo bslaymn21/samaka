@@ -46,71 +46,108 @@
                 <p class="text-slate-500 text-[10px] font-bold uppercase tracking-[0.4em]">ADMINISTRATION SYSTEM</p>
             </div>
 
-            <form id="login-form" class="space-y-6 text-left">
-                <div class="space-y-2">
-                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest pl-2">Access
-                        Key</label>
+            <form id="login-form" class="space-y-6 text-right" dir="rtl">
+                <div class="space-y-2 text-right">
+                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest pr-2">اسم المستخدم</label>
                     <div class="relative">
-                        <span
-                            class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-xl">vpn_key</span>
-                        <input type="password" id="password" required placeholder="••••••••"
-                            class="w-full pl-12 pr-6 py-5 bg-white/5 border border-white/10 rounded-2xl focus:border-secondary focus:ring-0 transition-all text-white outline-none">
+                        <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-xl">person</span>
+                        <input type="text" id="username" required placeholder="admin"
+                            class="w-full pr-12 pl-6 py-5 bg-white/5 border border-white/10 rounded-2xl focus:border-secondary focus:ring-0 transition-all text-white outline-none font-bold">
                     </div>
-                    <p class="text-[9px] text-slate-500 text-center mt-2 italic">Hint: use <span
-                            class="text-secondary font-bold">admin123</span> to unlock</p>
+                </div>
+
+                <div class="space-y-2 text-right">
+                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest pr-2">كلمة المرور</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-xl">vpn_key</span>
+                        <input type="password" id="password" required placeholder="••••••••"
+                            class="w-full pr-12 pl-6 py-5 bg-white/5 border border-white/10 rounded-2xl focus:border-secondary focus:ring-0 transition-all text-white outline-none">
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 px-2">
+                    <input type="checkbox" id="remember-me" class="w-5 h-5 rounded-lg bg-white/5 border-white/10 text-secondary focus:ring-secondary cursor-pointer">
+                    <label for="remember-me" class="text-xs font-bold text-slate-400 cursor-pointer select-none">حفظ الدخول على هذا الهاتف</label>
                 </div>
 
                 <div id="error-msg" class="hidden animate-shake">
-                    <div
-                        class="bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold p-4 rounded-xl flex items-center gap-3">
+                    <div class="bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-bold p-4 rounded-xl flex items-center gap-3">
                         <span class="material-symbols-outlined text-sm">error</span>
-                        Invalid key. Authorization denied.
+                        بيانات الدخول غير صحيحة. حاول مرة أخرى.
                     </div>
                 </div>
 
-                <button type="submit"
-                    class="w-full bg-secondary py-5 rounded-2xl text-white font-black tracking-[0.2em] uppercase glow-button hover:scale-[1.02] active:scale-95 transition-all shadow-xl">
-                    Authenticate
+                <button type="submit" id="submit-btn"
+                    class="w-full bg-secondary py-5 rounded-2xl text-white font-black tracking-[0.2em] uppercase glow-button hover:scale-[1.02] active:scale-95 transition-all shadow-xl flex justify-center items-center gap-3">
+                    <span>دخول النظام</span>
+                    <span class="material-symbols-outlined text-xl">login</span>
                 </button>
             </form>
 
             <div class="mt-12 pt-8 border-t border-white/5">
                 <a href="../index.html"
                     class="text-slate-500 hover:text-white text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-sm">arrow_back</span>
-                    Return to public site
+                    العودة للموقع
+                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
                 </a>
             </div>
 
             <p class="text-slate-600 text-[9px] font-bold uppercase tracking-tighter mt-8">
-                &copy; 2026 SAMAKA OS &bull; V1.2.0 • GLOBAL SECURE SYSTEM
+                &copy; 2026 SAMAKA OS &bull; V1.5.0 • SECURE ACCESS
             </p>
         </div>
     </div>
 
-    <script>
-        document.getElementById('login-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const pass = document.getElementById('password').value;
-            const error = document.getElementById('error-msg');
+    <script type="module">
+        import { initAdminAccount, verifyAdmin } from '../database/services.js';
 
-            if (pass === 'admin123') {
-                sessionStorage.setItem('admin_authenticated', 'true');
-                // Simple entry animation before redirect
-                document.querySelector('.login-glass').style.transform = 'scale(0.95)';
-                document.querySelector('.login-glass').style.opacity = '0';
-                document.querySelector('.login-glass').style.transition = 'all 0.5s ease';
-                setTimeout(() => {
+        // Ensure default account exists
+        initAdminAccount();
+
+        // Check if already remembered
+        const rememberedUser = localStorage.getItem('admin_session');
+        if (rememberedUser) {
+             window.location.href = 'index.html';
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const remember = document.getElementById('remember-me').checked;
+            const error = document.getElementById('error-msg');
+            const btn = document.getElementById('submit-btn');
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="animate-spin material-symbols-outlined">sync</span>';
+                
+                const adminData = await verifyAdmin(user, pass);
+                
+                if (adminData) {
+                    // Success
+                    const sessionData = { 
+                        username: adminData.username, 
+                        loginTime: Date.now(),
+                        remember: remember
+                    };
+                    
+                    if (remember) {
+                        localStorage.setItem('admin_session', JSON.stringify(sessionData));
+                    } else {
+                        sessionStorage.setItem('admin_session', JSON.stringify(sessionData));
+                    }
+
                     window.location.href = 'index.html';
-                }, 500);
-            } else {
+                } else {
+                    throw new Error("Invalid credentials");
+                }
+            } catch (err) {
+                console.error(err);
                 error.classList.remove('hidden');
+                btn.disabled = false;
+                btn.innerHTML = '<span>دخول النظام</span><span class="material-symbols-outlined text-xl">login</span>';
                 document.getElementById('password').value = '';
-                // Shake effect on the container
-                const container = document.querySelector('.login-glass');
-                container.style.animation = 'none';
-                void container.offsetWidth;
-                container.style.animation = 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both';
             }
         });
     </script>

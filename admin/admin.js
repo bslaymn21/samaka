@@ -14,11 +14,16 @@ import {
     deleteOrder,
     getCategories,
     saveCategory,
-    deleteCategory
+    deleteCategory,
+    updateAdminPassword
 } from '../database/services.js';
 import { uploadToCloudinary } from '../js/cloudinary.js';
-import { auth } from '../database/config.js';
-import { updatePassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+// AUTH PROTECTION (Custom Firestore Session)
+const adminSession = JSON.parse(localStorage.getItem('admin_session') || sessionStorage.getItem('admin_session') || 'null');
+if (!adminSession) {
+    window.location.href = 'login.html';
+}
 
 let currentData = [];
 let categories = [];
@@ -62,11 +67,14 @@ async function applyWatermark(file) {
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Initial Setup
-    await refreshData();
-    await updateStats();
+    // BOOTSTRAP DATA PARALLEL (Fast Load)
+    await Promise.all([
+        refreshData(),
+        updateStats(),
+        loadSettings(),
+        renderComments()
+    ]);
     loadDashboardTables();
-    await loadSettings();
-    await renderComments();
 
     // Sidebar active state fix
     const currentTab = localStorage.getItem('admin_active_tab') || 'dashboard';
@@ -79,6 +87,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Force Arabic for Admin Dashboard Demo
     localStorage.setItem('preferred_language', 'ar');
     if (typeof applyLanguage === 'function') applyLanguage('ar');
+
+    // Auto-refresh stats every 30 seconds
+    setInterval(updateStats, 30000);
 });
 
 async function refreshData() {
@@ -86,8 +97,11 @@ async function refreshData() {
         getMenuItems(),
         getCategories()
     ]);
+    // Essential: Sync with global state for reordering logic
+    window.samaka_categories = categories;
+
     renderMenuGrid();
-    renderCategories();
+    renderCategories(categories);
 }
 
 // Sidebar & Mobile Toggle
@@ -135,6 +149,18 @@ function switchTab(tabName) {
         clickedBtn.classList.add('active');
     }
 
+    // Update Mobile Nav UI
+    document.querySelectorAll('[id^="mobile-tab-"]').forEach(btn => {
+        btn.classList.remove('text-primary', 'dark:text-blue-400', 'scale-110');
+        btn.classList.add('text-slate-400', 'dark:text-slate-500');
+    });
+
+    const mobileBtn = document.getElementById(`mobile-tab-${tabName}`);
+    if (mobileBtn) {
+        mobileBtn.classList.remove('text-slate-400', 'dark:text-slate-500');
+        mobileBtn.classList.add('text-primary', 'dark:text-blue-400', 'scale-110');
+    }
+
     // UI: Content Sections
     const tabs = ['dashboard', 'menu', 'orders', 'settings', 'qrcode'];
     tabs.forEach(t => {
@@ -161,6 +187,7 @@ function switchTab(tabName) {
 
     // Trigger Tab Specific Actions
     if (tabName === 'dashboard') {
+        updateStats();
         setTimeout(initChart, 300);
     }
     if (tabName === 'qrcode') {
@@ -173,15 +200,47 @@ function switchTab(tabName) {
     }
 }
 
+async function initChart() {
+    const ctx = document.getElementById('analyticsChart');
+    if (!ctx) return;
+
+    try {
+        if (window.myChart) window.myChart.destroy();
+
+        window.myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
+                datasets: [{
+                    label: 'الطلبات',
+                    data: [12, 19, 13, 25, 22, 30, 45],
+                    borderColor: '#2680FF',
+                    backgroundColor: 'rgba(38, 128, 255, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { display: false } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    } catch (e) { console.error("Chart Error", e); }
+}
+
 // Stats & Mock Realism
 async function updateStats() {
-    const ordersLogs = JSON.parse(localStorage.getItem('matamkom_orders_logs') || '[]');
-
-    // FETCH REAL DATA
-    const visitors = await getTodayVisitors();
-    const whatsappConversions = await getWhatsAppConversions();
-
-    const qrScans = await getQRScans();
+    // FETCH REAL DATA IN PARALLEL
+    const [visitors, whatsappConversions, qrScans] = await Promise.all([
+        getTodayVisitors(),
+        getWhatsAppConversions(),
+        getQRScans()
+    ]);
 
     const elements = {
         'stat-visitors': visitors.toLocaleString(),
@@ -216,34 +275,39 @@ async function renderComments() {
         const date = new Date(f.createdAt).toLocaleDateString('ar-EG', { hour: '2-digit', minute: '2-digit' });
         const initial = (f.name || 'ع').charAt(0);
         const isShown = f.showOnHome === true;
-        
+
         return `
-            <div class="flex gap-4 items-start p-4 bg-slate-50 dark:bg-white/5 rounded-2xl animate-in group">
-                <div class="w-10 h-10 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold">${initial}</div>
-                <div class="flex-grow">
-                    <div class="flex justify-between mb-1">
-                        <div class="flex items-center gap-2">
-                            <h4 class="text-sm font-bold text-slate-700 dark:text-white">${f.name || 'عميل مجهول'}</h4>
-                            ${f.phone ? `<a href="https://wa.me/${f.phone}" target="_blank" class="flex items-center gap-1 text-[10px] text-emerald-500 font-bold hover:underline bg-emerald-500/5 px-2 py-0.5 rounded-full">
-                                <span class="material-symbols-outlined text-[12px]">call</span>
-                                ${f.phone}
-                            </a>` : ''}
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="text-[10px] text-slate-400">${date}</span>
-                            <button onclick="toggleFeedbackVisibility('${f.id}', ${!isShown})" 
-                                class="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold transition-all ${isShown ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-slate-200 dark:bg-white/10 text-slate-500'}">
-                                <span class="material-symbols-outlined text-[14px]">${isShown ? 'visibility' : 'visibility_off'}</span>
-                                ${isShown ? 'يظهر بالرئيسية' : 'مخفي'}
-                            </button>
+            <div class="relative p-4 bg-white dark:bg-white/5 rounded-[1.5rem] border border-slate-100 dark:border-white/10 shadow-sm animate-in">
+                <div class="flex gap-3 mb-3">
+                    <div class="w-10 h-10 shrink-0 rounded-full bg-blue-50 dark:bg-blue-500/10 text-[#0058bc] dark:text-blue-400 flex items-center justify-center font-black text-sm border border-blue-100 dark:border-blue-500/20">${initial}</div>
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-xs font-black text-slate-900 dark:text-white">${f.name || 'عميل مجهول'}</h4>
+                                <div class="flex gap-0.5 mt-0.5">
+                                    ${Array.from({ length: 5 }).map((_, i) => `
+                                        <span class="material-symbols-outlined text-[10px] ${i < (f.rating || 5) ? 'text-amber-500' : 'text-slate-200'}" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            <span class="text-[9px] text-slate-400 font-bold bg-slate-50 dark:bg-white/5 px-2 py-0.5 rounded-md">${date}</span>
                         </div>
                     </div>
-                    <div class="flex gap-0.5 mb-2">
-                        ${Array.from({ length: 5 }).map((_, i) => `
-                            <span class="material-symbols-outlined text-[10px] ${i < (f.rating || 5) ? 'text-amber-500' : 'text-slate-200'}" style="font-variation-settings: 'FILL' 1;">star</span>
-                        `).join('')}
-                    </div>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">${f.comment || 'بدون تعليق'}</p>
+                </div>
+                
+                <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed mb-4 px-1 italic">"${f.comment || 'بدون تعليق'}"</p>
+                
+                <div class="flex justify-between items-center pt-3 border-t border-slate-50 dark:border-white/5">
+                    ${f.phone ? `<a href="https://wa.me/${f.phone}" target="_blank" class="flex items-center gap-1.5 text-[10px] text-emerald-600 dark:text-emerald-400 font-black hover:scale-105 transition-transform bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1 rounded-lg">
+                        <span class="material-symbols-outlined text-[14px]">call</span>
+                        ${f.phone}
+                    </a>` : '<div></div>'}
+                    
+                    <button onclick="window.toggleFeedbackVisibility('${f.id}', ${!isShown})" 
+                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black transition-all ${isShown ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-slate-100 dark:bg-white/10 text-slate-500'}">
+                        <span class="material-symbols-outlined text-[14px]">${isShown ? 'visibility' : 'visibility_off'}</span>
+                        ${isShown ? 'يظهر بالرئيسية' : 'مخفي حالياً'}
+                    </button>
                 </div>
             </div>
         `;
@@ -286,33 +350,51 @@ async function renderOrders() {
         tbody.innerHTML = '';
 
         if (logs.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="py-24 text-center opacity-30 text-xs font-bold">لا توجد طلبات مسجلة حالياً</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" class="py-24 text-center opacity-30 text-xs font-bold">لا توجد طلبات مسجلة حالياً</td></tr>`;
             return;
         }
 
         tbody.innerHTML = logs.map(log => {
             const idShort = (log.id || '0000').toString().slice(-4);
             const dateStr = log.createdAt ? new Date(log.createdAt).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '';
+            const itemsSummary = (log.items || []).map(i => `${i.quantity}x ${i.name}`).join('، ');
+            
             return `
-                <tr class="hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors group border-b border-transparent last:border-0">
-                    <td class="px-10 py-6"><span class="font-black text-[#0058bc] dark:text-blue-400 text-xs">#${idShort}</span></td>
-                    <td class="px-10 py-6">
-                        <div class="font-bold text-slate-900 dark:text-slate-100">${log.userName || 'زبون خارجي'}</div>
-                        <div class="text-[10px] text-slate-400 font-bold mt-0.5">${log.phone || ''}</div>
-                    </td>
-                    <td class="px-10 py-6">
-                        <div class="text-xs font-bold text-slate-600 dark:text-slate-400 line-clamp-1">${log.items.map(i => `${i.quantity}x ${i.name}`).join('، ')}</div>
-                        <div class="text-[10px] text-slate-400 font-medium mt-1 italic">${dateStr}</div>
-                    </td>
-                    <td class="px-10 py-6 font-black text-slate-900 dark:text-white">${log.total} جم</td>
-                    <td class="px-10 py-6">${getStatusBadge(log.status || 'pending')}</td>
-                    <td class="px-10 py-6 text-left">
-                        <div class="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all">
-                            <button onclick="handleStatusUpdate('${log.id}', 'confirmed')" class="w-9 h-9 bg-blue-50 dark:bg-blue-500/10 text-[#0058bc] dark:text-blue-400 rounded-xl flex items-center justify-center hover:bg-[#0058bc] hover:text-white transition-all shadow-sm"><span class="material-symbols-outlined text-lg">check_circle</span></button>
-                            <button onclick="handleDeleteOrder('${log.id}')" class="w-9 h-9 bg-rose-50 dark:bg-rose-500/10 text-rose-500 dark:text-rose-400 rounded-xl flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all shadow-sm"><span class="material-symbols-outlined text-lg">delete</span></button>
+                <div class="flex flex-col md:grid md:grid-cols-5 gap-3 md:gap-0 p-5 md:px-10 md:py-6 hover:bg-slate-50/50 dark:hover:bg-white/5 transition-all group relative border-b border-slate-100 dark:border-white/5 last:border-0">
+                    <!-- Order ID -->
+                    <div class="flex justify-between items-center md:block">
+                        <span class="md:hidden text-[10px] font-black text-slate-400 uppercase tracking-widest">رقم الطلب</span>
+                        <span class="font-black text-[#0058bc] dark:text-blue-400 text-xs md:text-sm">#${idShort}</span>
+                    </div>
+                    
+                    <!-- Customer -->
+                    <div class="flex justify-between items-start md:block">
+                        <span class="md:hidden text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">الزبون</span>
+                        <div class="text-right md:text-start">
+                            <div class="font-bold text-slate-900 dark:text-slate-100 text-xs md:text-sm">${log.userName || 'زبون خارجي'}</div>
+                            <div class="text-[10px] text-slate-400 font-bold mt-0.5">${log.phone || ''}</div>
                         </div>
-                    </td>
-                </tr>
+                    </div>
+                    
+                    <!-- Items -->
+                    <div class="flex flex-col md:block">
+                        <span class="md:hidden text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">الوجبات</span>
+                        <div class="text-xs font-bold text-slate-600 dark:text-slate-400 line-clamp-2 md:line-clamp-1 leading-relaxed">${itemsSummary}</div>
+                        <div class="text-[10px] text-slate-400 font-medium mt-1 italic">${dateStr}</div>
+                    </div>
+                    
+                    <!-- Total -->
+                    <div class="flex justify-between items-center md:block">
+                        <span class="md:hidden text-[10px] font-black text-slate-400 uppercase tracking-widest">الإجمالي</span>
+                        <span class="font-black text-slate-900 dark:text-white text-xs md:text-sm">${log.total || '0'} جم</span>
+                    </div>
+                    
+                    <!-- Status -->
+                    <div class="flex justify-between items-center md:block">
+                        <span class="md:hidden text-[10px] font-black text-slate-400 uppercase tracking-widest">الحالة</span>
+                        <div class="scale-90 md:scale-100 origin-right transition-transform">${getStatusBadge(log.status || 'pending')}</div>
+                    </div>
+                </div>
             `;
         }).join('');
     } catch (e) { console.error("Orders Error:", e); }
@@ -401,34 +483,41 @@ function renderMenuGrid(filter = "") {
     data.forEach(item => {
         const itemImage = (item.images && item.images.length > 0) ? item.images[0] : (item.image || '../assets/only logo.png');
         const isAvailable = item.isAvailable !== false;
-        
+
         const card = document.createElement('div');
         card.className = "premium-card group overflow-hidden animate-in ring-1 ring-slate-100 dark:ring-white/5";
+        card.dataset.category = item.category;
         card.innerHTML = `
-            <div class="aspect-video relative overflow-hidden bg-slate-50 dark:bg-slate-950">
-                <img src="${itemImage}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${!isAvailable ? 'grayscale opacity-70' : ''}" alt="${item.name_ar}">
-                <div class="absolute top-4 right-4 flex gap-2">
-                     <div class="px-4 py-1.5 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-xl text-[10px] font-black uppercase shadow-lg text-[#0058bc] dark:text-blue-400 border border-white/50 dark:border-white/10">${item.category}</div>
-                </div>
-                ${!isAvailable ? `<div class="absolute inset-0 bg-white/40 dark:bg-black/60 flex items-center justify-center backdrop-blur-[2px]"><span class="bg-rose-500 text-white px-5 py-2 rounded-xl text-[11px] font-black shadow-xl">غير متوفر</span></div>` : ''}
-                
-                <button onclick="toggleAvailability('${item.id}', ${!isAvailable})" 
-                    class="absolute bottom-4 right-4 w-11 h-11 rounded-2xl flex items-center justify-center backdrop-blur-md shadow-xl transition-all active:scale-90 ${isAvailable ? 'bg-white/95 dark:bg-slate-900/95 text-emerald-500' : 'bg-rose-500 text-white'}"
-                    title="${isAvailable ? 'متوفر' : 'غير متوفر'}">
-                    <span class="material-symbols-outlined text-2xl font-black">${isAvailable ? 'check_circle' : 'block'}</span>
-                </button>
-            </div>
-            <div class="p-6 md:p-8">
-                <div class="flex justify-between items-start gap-4 mb-4">
-                    <h4 class="text-lg md:text-2xl font-bold text-slate-900 dark:text-white leading-tight">${item.name_ar}</h4>
-                    <span class="text-[#0058bc] dark:text-blue-400 font-black text-xl md:text-2xl whitespace-nowrap">${item.price}<span class="text-xs mr-1 opacity-70">جم</span></span>
-                </div>
-                <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed mb-6 md:mb-8">${item.description_ar || 'لم يتم إضافة وصف لهذه الوجبة بعد'}</p>
-                <div class="flex gap-3">
-                    <button onclick="editItem('${item.id}')" class="flex-grow py-3 md:py-4 bg-slate-50 dark:bg-white/5 rounded-2xl text-[11px] font-black text-slate-600 dark:text-slate-400 hover:bg-[#0058bc] hover:text-white transition-all shadow-sm">تعديل</button>
-                    <button onclick="deleteItem('${item.id}')" class="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center bg-rose-50 dark:bg-rose-500/10 text-rose-500 dark:text-rose-400 rounded-2xl hover:bg-rose-500 hover:text-white transition-all shadow-sm">
-                        <span class="material-symbols-outlined text-lg md:text-xl">delete</span>
+            <div class="flex flex-col h-full">
+                <!-- Image Container -->
+                <div class="aspect-video relative overflow-hidden bg-slate-50 dark:bg-slate-950 shrink-0">
+                    <img src="${itemImage}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${!isAvailable ? 'grayscale opacity-70' : ''}" alt="${item.name_ar}">
+                    <div class="absolute top-3 right-3 flex gap-2">
+                         <div class="px-3 py-1 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-lg text-[9px] font-black uppercase shadow-sm text-[#0058bc] dark:text-blue-400 border border-white/20">${item.category}</div>
+                    </div>
+                    ${!isAvailable ? `<div class="absolute inset-0 bg-white/40 dark:bg-black/60 flex items-center justify-center backdrop-blur-[2px]"><span class="bg-rose-500 text-white px-4 py-1.5 rounded-lg text-[10px] font-black shadow-xl">غير متوفر</span></div>` : ''}
+                    
+                    <button onclick="window.toggleAvailability('${item.id}', ${!isAvailable})" 
+                        class="absolute bottom-3 right-3 w-10 h-10 rounded-xl flex items-center justify-center backdrop-blur-md shadow-lg transition-all active:scale-90 ${isAvailable ? 'bg-white/95 dark:bg-slate-900/95 text-emerald-500' : 'bg-rose-500 text-white'}"
+                        title="${isAvailable ? 'متوفر' : 'غير متوفر'}">
+                        <span class="material-symbols-outlined text-xl font-black">${isAvailable ? 'check_circle' : 'block'}</span>
                     </button>
+                </div>
+                
+                <!-- Content Container -->
+                <div class="p-5 md:p-8 flex flex-col flex-grow">
+                    <div class="flex justify-between items-start gap-3 mb-3">
+                        <h4 class="text-base md:text-2xl font-bold text-slate-900 dark:text-white leading-tight">${item.name_ar}</h4>
+                        <span class="text-[#0058bc] dark:text-blue-400 font-black text-lg md:text-2xl whitespace-nowrap">${item.price}<span class="text-[10px] mr-1 opacity-70">جم</span></span>
+                    </div>
+                    <p class="text-[11px] md:text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed mb-6 flex-grow">${item.description_ar || 'لم يتم إضافة وصف لهذه الوجبة بعد'}</p>
+                    
+                    <div class="flex gap-2.5 mt-auto">
+                        <button onclick="window.editItem('${item.id}')" class="flex-grow py-3 md:py-4 bg-slate-50 dark:bg-white/5 rounded-xl text-[10px] font-black text-slate-600 dark:text-slate-400 hover:bg-[#0058bc] hover:text-white transition-all border border-slate-100 dark:border-white/5">تعديل</button>
+                        <button onclick="window.deleteItem('${item.id}')" class="w-11 h-11 md:w-14 md:h-14 flex items-center justify-center bg-rose-50 dark:bg-rose-500/10 text-rose-500 dark:text-rose-400 rounded-xl hover:bg-rose-500 hover:text-white transition-all border border-rose-100 dark:border-rose-500/10">
+                            <span class="material-symbols-outlined text-base md:text-xl">delete</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
@@ -482,7 +571,7 @@ function formatTime(timeStr, lang) {
     const ampmEn = h >= 12 ? 'PM' : 'AM';
     const ampmAr = h >= 12 ? 'مساءً' : 'صباحاً';
     let h12 = h % 12 || 12;
-    
+
     return lang === 'ar' ? `${h12}:${m} ${ampmAr}` : `${h12}:${m} ${ampmEn}`;
 }
 
@@ -493,10 +582,10 @@ function parseTimeToHHMM(timeStr) {
     let h = parseInt(match[1]);
     const m = match[2];
     const ampm = match[3].toLowerCase();
-    
+
     if ((ampm === 'pm' || ampm === 'مساءً') && h < 12) h += 12;
     if ((ampm === 'am' || ampm === 'صباحاً') && h === 12) h = 0;
-    
+
     return `${h.toString().padStart(2, '0')}:${m}`;
 }
 
@@ -515,7 +604,7 @@ async function saveSettings(e) {
     // Handle working hours formatting
     const start = document.getElementById('setting-startTime')?.value;
     const end = document.getElementById('setting-endTime')?.value;
-    
+
     if (start && end) {
         settings.hours_ar = `${formatTime(start, 'ar')} - ${formatTime(end, 'ar')}`;
         settings.hours_en = `${formatTime(start, 'en')} - ${formatTime(end, 'en')}`;
@@ -530,14 +619,14 @@ async function saveSettings(e) {
 
     try {
         await updateGlobalSettings(settings);
-        
+
         if (newPassword && newPassword.trim().length >= 6) {
-            const user = auth.currentUser;
-            if (user) {
-                await updatePassword(user, newPassword);
+            const success = await updateAdminPassword(adminSession.username, newPassword);
+            if (success) {
+                showNotification('تم تغيير كلمة المرور بنجاح ✅');
                 document.getElementById('setting-new-password').value = '';
             } else {
-                showNotification('يرجى تسجيل الدخول لتغيير كلمة المرور', 'error');
+                showNotification('فشل تغيير كلمة المرور ❌', 'error');
             }
         } else if (newPassword && newPassword.trim().length > 0) {
             showNotification('كلمة المرور يجب أن تكون 6 أحرف على الأقل ⚠️', 'warning');
@@ -556,7 +645,7 @@ function generateQRCode() {
     const container = document.getElementById('qrcode-container');
     if (!container) return;
     container.innerHTML = "";
-    
+
     const menuUrl = window.location.origin + "/index.html?ref=qr";
 
     // Use higher resolution and error correction Level H
@@ -595,7 +684,7 @@ function generateQRCode() {
                 if (modules[row][col]) {
                     // Check if is corner (eye)
                     const isEye = (row < 7 && col < 7) || (row < 7 && col > moduleCount - 8) || (row > moduleCount - 8 && col < 7);
-                    
+
                     if (isEye) {
                         // Custom rounded eye drawing
                         // Only draw on first cell of eye to avoid overlap
@@ -607,7 +696,7 @@ function generateQRCode() {
                         const x = col * moduleSize + moduleSize / 2;
                         const y = row * moduleSize + moduleSize / 2;
                         const radius = moduleSize * 0.4;
-                        
+
                         ctx.beginPath();
                         ctx.arc(x, y, radius, 0, Math.PI * 2);
                         ctx.fill();
@@ -626,14 +715,14 @@ function generateQRCode() {
             const y = (size - logoSize) / 2;
 
             // Drawing with ZERO padding - perfectly tight
-            const padding = 0; 
-            
+            const padding = 0;
+
             // Clear the area first to ensure clean background
             ctx.fillStyle = "white";
             drawRoundedRect(ctx, x, y, logoSize, logoSize, 20);
-            
+
             ctx.drawImage(logo, x, y, logoSize, logoSize);
-            
+
             const img = document.createElement('img');
             img.src = finalCanvas.toDataURL("image/png");
             img.style.width = "100%";
@@ -646,14 +735,14 @@ function generateQRCode() {
 function drawCornerEye(ctx, x, y, size) {
     const thickness = size / 7;
     ctx.fillStyle = "#0f172a";
-    
+
     // Outer Rounded Square
     drawRoundedRect(ctx, x, y, size, size, size * 0.25);
-    
+
     // Inner white space
     ctx.fillStyle = "white";
     drawRoundedRect(ctx, x + thickness, y + thickness, size - thickness * 2, size - thickness * 2, size * 0.15);
-    
+
     // Core Rounded Square
     ctx.fillStyle = "#0f172a";
     drawRoundedRect(ctx, x + thickness * 2, y + thickness * 2, size - thickness * 4, size - thickness * 4, size * 0.1);
@@ -674,7 +763,7 @@ function downloadQRCode() {
     const container = document.getElementById('qrcode-container');
     const finalData = container.dataset.finalQr;
     if (!finalData) return;
-    
+
     const link = document.createElement('a');
     link.download = 'samaka-qr.png';
     link.href = finalData;
@@ -690,10 +779,10 @@ function openModal() {
     document.getElementById('image-previews').innerHTML = '';
     document.getElementById('item-show-home').checked = true;
     document.getElementById('item-discount-pct').value = '';
-    
+
     // Reset Checkboxes, Tags & Price Inputs
     document.querySelectorAll('.custom-variant-label').forEach(el => el.remove());
-    
+
     document.querySelectorAll('#options-sizes-container input[type="checkbox"]').forEach(cb => {
         cb.checked = false;
         cb.parentElement.querySelector('.variant-price').value = '';
@@ -704,7 +793,7 @@ function openModal() {
     });
     currentTypeTags = [];
     renderTypeTags();
-    
+
     document.getElementById('item-modal').classList.remove('hidden');
 }
 function closeModal() { document.getElementById('item-modal').classList.add('hidden'); }
@@ -730,7 +819,7 @@ async function handleFormSubmit(e) {
         }
 
         const id = document.getElementById('item-id').value;
-        
+
         // Extract Checked Box Arrays with Prices
         const selectedSizes = Array.from(document.querySelectorAll('#options-sizes-container input[type="checkbox"]:checked')).map(cb => {
             const val = cb.parentElement.querySelector('.variant-price').value;
@@ -837,7 +926,7 @@ function editItem(id) {
     document.getElementById('item-category').value = item.category || '';
     document.getElementById('item-price').value = item.price || 0;
     document.getElementById('item-old-price').value = item.oldPrice || '';
-    
+
     // Auto-calculate percentage if prices exist
     if (item.oldPrice && item.price && item.oldPrice > item.price) {
         const pct = Math.round(((item.oldPrice - item.price) / item.oldPrice) * 100);
@@ -856,7 +945,7 @@ function editItem(id) {
                 // Support legacy format (strings) or new format (objects)
                 const sizeName = typeof sizeObj === 'string' ? sizeObj : sizeObj.name;
                 const sizePrice = typeof sizeObj === 'object' ? sizeObj.price : null;
-                
+
                 let cb = document.querySelector(`#options-sizes-container input[value="${sizeName}"]`);
                 if (!cb) {
                     injectVariantDOM('sizes', sizeName, sizePrice);
@@ -872,7 +961,7 @@ function editItem(id) {
             item.options.methods.forEach(methodObj => {
                 const methodName = typeof methodObj === 'string' ? methodObj : methodObj.name;
                 const methodPrice = typeof methodObj === 'object' ? methodObj.price : null;
-                
+
                 let cb = document.querySelector(`#options-methods-container input[value="${methodName}"]`);
                 if (!cb) {
                     injectVariantDOM('methods', methodName, methodPrice);
@@ -898,69 +987,173 @@ function editItem(id) {
  * --- CATEGORY MANAGEMENT ---
  */
 
-function renderCategories() {
+function renderCategories(categories = []) {
     const list = document.getElementById('categories-list');
+    const filterBar = document.getElementById('admin-menu-filters');
     const select = document.getElementById('item-category');
-    if (!list || !select) return;
 
-    if (categories.length === 0) {
-        list.innerHTML = '<p class="text-xs text-slate-400 italic">لا توجد أقسام مضافة بعد، أضف أول قسم للأعلى.</p>';
-        select.innerHTML = '<option value="" disabled selected>يجب إضافة أقسام أولاً</option>';
-        return;
+    if (list && Array.isArray(categories)) {
+        list.innerHTML = categories.map((cat, index) => `
+            <div class="category-chip relative" data-id="${cat.id}">
+                <div class="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl hover:border-[#0058bc] transition-all shadow-sm group min-w-max">
+                    <!-- Order Selector Button -->
+                    <button onclick="window.toggleOrderDropdown(event, '${cat.id}')" class="w-7 h-7 flex items-center justify-center bg-slate-100 dark:bg-white/5 rounded-lg text-[11px] font-black text-[#0058bc] dark:text-blue-400 hover:bg-[#0058bc] hover:text-white transition-all shadow-inner">
+                        ${index + 1}
+                    </button>
+                    
+                    <!-- Fixed Overlay Selector (Modal Style) -->
+                    <div id="dropdown-${cat.id}" class="order-dropdown hidden fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+                        <div class="bg-white dark:bg-slate-900 w-full max-w-[320px] rounded-3xl shadow-2xl border border-white dark:border-white/10 p-6 scale-in-center">
+                            <div class="flex justify-between items-center mb-6">
+                                <div>
+                                    <h4 class="text-sm font-black text-slate-900 dark:text-white">ترتيب القسم</h4>
+                                    <p class="text-[10px] text-slate-400 font-bold mt-0.5">اختر المكان الجديد لـ "${cat.name}"</p>
+                                </div>
+                                <button onclick="window.toggleOrderDropdown(event, '${cat.id}')" class="text-slate-400 hover:text-rose-500 transition-colors">
+                                    <span class="material-symbols-outlined text-[24px]">close</span>
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-4 gap-3">
+                                ${categories.map((_, i) => `
+                                    <button onclick="window.reorderCategory('${cat.id}', ${i})" class="aspect-square flex items-center justify-center rounded-2xl text-xs font-black transition-all ${i === index ? 'bg-[#0058bc] text-white shadow-lg shadow-blue-500/30' : 'bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-slate-400 hover:bg-[#0058bc]/10 hover:text-[#0058bc]'}">
+                                        ${i + 1}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200">${cat.name}</span>
+                    <button onclick="handleDeleteCategory('${cat.id}')" class="text-slate-300 hover:text-rose-500 transition-colors ml-1">
+                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                    </button>
+                </div>
+            </div>
+        `).join('');
     }
 
-    // Render Tags in Management Section
-    list.innerHTML = categories.map(c => `
-        <div class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-full text-xs font-bold shadow-sm">
-            <span>${c.name}</span>
-            <button onclick="handleDeleteCategory('${c.id}')" class="text-red-400 hover:text-red-500 transition-colors">
-                <span class="material-symbols-outlined text-[14px]">close</span>
-            </button>
-        </div>
-    `).join('');
+    // Populate Quick Search / Filter Bar (Bottom List)
+    if (filterBar && Array.isArray(categories)) {
+        const allBtn = `
+            <div class="admin-filter-btn-wrapper flex items-center bg-[#0058bc] rounded-xl shadow-lg shadow-blue-500/20 overflow-hidden min-w-max">
+                <button onclick="filterMenuItemsByCategory('all')" class="admin-filter-btn whitespace-nowrap px-6 py-2.5 text-[10px] font-black transition-all text-white" data-category="all">
+                    الكل
+                </button>
+            </div>
+        `;
 
-    // Render Options in Item Modal
-    select.innerHTML = categories.map(c => `
-        <option value="${c.name}">${c.name}</option>
-    `).join('');
+        const categoryBtns = categories.map(cat => `
+            <div class="admin-filter-btn-wrapper flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl shadow-sm overflow-hidden min-w-max">
+                <button onclick="filterMenuItemsByCategory('${cat.name}')" class="admin-filter-btn whitespace-nowrap px-5 py-2.5 text-[10px] font-black transition-all text-slate-600 dark:text-slate-300" data-category="${cat.name}">
+                    ${cat.name}
+                </button>
+            </div>
+        `).join('');
+
+        filterBar.innerHTML = allBtn + categoryBtns;
+    }
+
+    // Update Modal Select
+    if (select && Array.isArray(categories)) {
+        select.innerHTML = categories.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+    }
+}
+
+function filterMenuItemsByCategory(category) {
+    const grid = document.getElementById('menu-items-grid');
+    if (!grid) return;
+
+    const items = grid.querySelectorAll('.premium-card');
+    const buttons = document.querySelectorAll('.admin-filter-btn');
+
+    buttons.forEach(btn => {
+        if (btn.getAttribute('data-category') === category) {
+            btn.classList.add('bg-[#0058bc]', 'text-white', 'border-[#0058bc]', 'shadow-lg', 'shadow-blue-500/20');
+            btn.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+        } else {
+            btn.classList.remove('bg-[#0058bc]', 'text-white', 'border-[#0058bc]', 'shadow-lg', 'shadow-blue-500/20');
+            btn.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+        }
+    });
+
+    items.forEach(item => {
+        const itemCategory = item.getAttribute('data-category');
+        if (category === 'all' || itemCategory === category) {
+            item.style.display = 'flex';
+            item.classList.add('animate-in');
+        } else {
+            item.style.display = 'none';
+        }
+    });
 }
 
 async function handleAddCategory() {
-    const input = document.getElementById('new-category-name');
-    const name = input.value.trim();
+    const nameInput = document.getElementById('new-category-name');
+    const name = nameInput.value.trim();
+
     if (!name) return;
 
     try {
-        await saveCategory({ name });
+        // New categories are added at the end by default
+        const nextOrder = categories.length > 0 ? Math.max(...categories.map(c => c.order || 0)) + 1 : 1;
+        await saveCategory({ name, order: nextOrder });
         showNotification('تم إضافة القسم الجديد بنجاح ✅');
-        input.value = '';
+        nameInput.value = '';
         await refreshData();
     } catch (e) {
         showNotification('حدث خطأ أثناء إضافة القسم', 'error');
     }
 }
 
+function showConfirm(title, message, onConfirm) {
+    const modal = document.getElementById('confirm-modal');
+    if (!modal) return;
+
+    document.getElementById('confirm-title').innerText = title;
+    document.getElementById('confirm-message').innerText = message;
+
+    modal.classList.remove('hidden');
+
+    const closeModal = () => modal.classList.add('hidden');
+
+    document.getElementById('confirm-cancel').onclick = closeModal;
+    document.getElementById('confirm-proceed').onclick = () => {
+        onConfirm();
+        closeModal();
+    };
+}
+
 async function handleDeleteCategory(id) {
-    if (!confirm('حذف هذا القسم قد يؤثر على الوجبات المرتبطة به. هل أنت متأكد؟')) return;
-    try {
-        await deleteCategory(id);
-        showNotification('تم حذف القسم بنجاح 🗑️');
-        await refreshData();
-    } catch (e) {
-        showNotification('حدث خطأ أثناء الحذف', 'error');
-    }
+    showConfirm(
+        'حذف القسم؟',
+        'حذف هذا القسم قد يؤثر على الوجبات المرتبطة به. هل أنت متأكد؟',
+        async () => {
+            try {
+                await deleteCategory(id);
+                showNotification('تم حذف القسم بنجاح 🗑️');
+                await refreshData();
+            } catch (e) {
+                showNotification('حدث خطأ أثناء الحذف', 'error');
+            }
+        }
+    );
 }
 
 async function deleteItem(id) {
-    if (!confirm('هل أنت متأكد من حذف هذه الوجبة نهائياً؟')) return;
-    try {
-        await deleteMenuItem(id);
-        showNotification('تم حذف الوجبة نهائياً 🗑️');
-        await refreshData();
-    } catch (error) {
-        console.error(error);
-        showNotification('حدث خطأ أثناء الحذف ❌', 'error');
-    }
+    showConfirm(
+        'حذف الوجبة؟',
+        'هل أنت متأكد من حذف هذه الوجبة نهائياً؟ لا يمكن التراجع عن هذا الفعل.',
+        async () => {
+            try {
+                await deleteMenuItem(id);
+                showNotification('تم حذف الوجبة نهائياً 🗑️');
+                await refreshData();
+            } catch (error) {
+                console.error(error);
+                showNotification('حدث خطأ أثناء الحذف ❌', 'error');
+            }
+        }
+    );
 }
 
 function calculateDiscountPrice() {
@@ -999,7 +1192,7 @@ async function toggleAvailability(id, status) {
         const idx = currentData.findIndex(i => i.id === id);
         if (idx !== -1) {
             currentData[idx].isAvailable = status;
-            renderMenuGrid(); 
+            renderMenuGrid();
         }
     } catch (e) {
         showNotification('فشل تحديث الحالة', 'error');
@@ -1028,7 +1221,7 @@ function renderTypeTags() {
 function addTypeTag() {
     const input = document.getElementById('type-input');
     const val = input.value.trim();
-    if(val && !currentTypeTags.includes(val)) {
+    if (val && !currentTypeTags.includes(val)) {
         currentTypeTags.push(val);
         input.value = '';
         renderTypeTags();
@@ -1044,11 +1237,11 @@ function addCustomVariant(type) {
     const priceInput = document.getElementById(type === 'sizes' ? 'custom-size-price' : 'custom-method-price');
     const name = nameInput.value.trim();
     const price = priceInput.value;
-    
+
     if (!name) return;
-    
+
     injectVariantDOM(type, name, price);
-    
+
     nameInput.value = '';
     priceInput.value = '';
     nameInput.focus();
@@ -1057,9 +1250,9 @@ function addCustomVariant(type) {
 function injectVariantDOM(type, name, price) {
     const container = document.getElementById(type === 'sizes' ? 'options-sizes-container' : 'options-methods-container');
     const color = type === 'sizes' ? 'sky' : 'purple';
-    
+
     if (document.querySelector(`#${container.id} input[value="${name}"]`)) return; // Prevent dupes
-    
+
     const label = document.createElement('label');
     label.className = `custom-variant-label relative flex items-stretch bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden has-[:checked]:border-${color}-500 has-[:checked]:ring-1 has-[:checked]:ring-${color}-500 transition-all shadow-sm`;
     label.innerHTML = `
@@ -1070,7 +1263,7 @@ function injectVariantDOM(type, name, price) {
         </span>
         <input type="number" placeholder="${type === 'sizes' ? 'السعر' : '+ ج.م'}" value="${price !== null ? price : ''}" onclick="event.stopPropagation()" class="variant-price hidden peer-checked:block w-20 px-2 text-[11px] font-bold bg-slate-50 dark:bg-slate-900 border-none outline-none dark:text-white text-center border-r border-slate-200 dark:border-white/10">
     `;
-    
+
     container.appendChild(label);
 }
 
@@ -1096,9 +1289,88 @@ window.toggleAvailability = toggleAvailability;
 window.addTypeTag = addTypeTag;
 window.removeTypeTag = removeTypeTag;
 window.addCustomVariant = addCustomVariant;
+window.filterMenuItemsByCategory = filterMenuItemsByCategory;
 window.toggleFeedbackVisibility = (id, status) => {
     updateFeedbackStatus(id, status).then(() => {
         showNotification(status ? 'سيظهر في الرئيسية ✨' : 'تم الإخفاء من الرئيسية');
         refreshData();
     });
 };
+
+// Order Dropdown Logic
+window.toggleOrderDropdown = function (event, id) {
+    event.preventDefault();
+    event.stopPropagation();
+    console.log("Toggling dropdown for:", id);
+    const allDropdowns = document.querySelectorAll('.order-dropdown');
+    allDropdowns.forEach(d => {
+        if (d.id !== `dropdown-${id}`) d.classList.add('hidden');
+    });
+    const dropdown = document.getElementById(`dropdown-${id}`);
+    if (dropdown) {
+        dropdown.classList.toggle('hidden');
+        console.log("Dropdown state:", dropdown.classList.contains('hidden') ? 'hidden' : 'visible');
+    }
+};
+
+window.reorderCategory = async function (catId, newIndex) {
+    console.log("--- Reorder Start ---");
+    console.log("Target ID:", catId, "New Index:", newIndex);
+
+    // Get fresh copy from global state
+    let cats = [...(window.samaka_categories || [])];
+    const oldIndex = cats.findIndex(c => c.id === catId);
+
+    if (oldIndex === -1) {
+        console.error("Critical: Category not found in global state");
+        return;
+    }
+
+    if (oldIndex === newIndex) {
+        console.log("No change in position");
+        document.querySelectorAll('.order-dropdown').forEach(d => d.classList.add('hidden'));
+        return;
+    }
+
+    // Rearrange
+    const [movedItem] = cats.splice(oldIndex, 1);
+    cats.splice(newIndex, 0, movedItem);
+
+    console.log("New Order Array:", cats.map(c => c.name));
+
+    // Update Global State immediately
+    window.samaka_categories = cats;
+
+    // FORCE UI RE-RENDER
+    renderCategories(cats);
+
+    // Close dropdowns
+    document.querySelectorAll('.order-dropdown').forEach(d => d.classList.add('hidden'));
+    showNotification('جاري الحفظ... ⏳');
+
+    try {
+        const updates = cats.map((cat, index) => {
+            return saveCategory({ id: cat.id, order: index });
+        });
+
+        await Promise.all(updates);
+        console.log("Firebase Update Success");
+        showNotification('تم تحديث الترتيب بنجاح ✨');
+
+        // Final sync
+        const freshCats = await getCategories();
+        window.samaka_categories = freshCats;
+        renderCategories(freshCats);
+    } catch (e) {
+        console.error("Firebase Update Failed", e);
+        showNotification('فشل الحفظ', 'error');
+        refreshData();
+    }
+};
+
+// Close dropdowns on outside click
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.category-chip')) {
+        document.querySelectorAll('.order-dropdown').forEach(d => d.classList.add('hidden'));
+    }
+});

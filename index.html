@@ -283,17 +283,24 @@
             getGlobalSettings,
             trackVisitor,
             trackWhatsAppOrder,
+            trackQRScan,
             saveFeedback,
             saveOrder,
             getAllFeedback,
             getCategories
         } from './database/services.js';
 
-        let cart = [];
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
         let currentFilter = 'all';
         let selectedOptions = { method: 'Grilled', size: 'Medium' };
 
         document.addEventListener('DOMContentLoaded', async () => {
+            // Track QR Scan if source is qr
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('source') === 'qr') {
+                trackQRScan();
+            }
+
             // Initial render with local data (fast)
             renderMenu('all');
             updateCartUI();
@@ -307,6 +314,7 @@
                 ]);
 
                 if (liveCats && liveCats.length > 0) {
+                    localStorage.setItem('samaka_categories', JSON.stringify(liveCats));
                     renderFilterButtons(liveCats);
                 }
 
@@ -430,7 +438,10 @@
             const emptyState = document.getElementById('empty-state');
             container.innerHTML = '';
 
-            const categories = [...new Set(data.map(item => item.category))];
+            // Get categories from localStorage to maintain sorting
+            const savedCats = JSON.parse(localStorage.getItem('samaka_categories') || '[]');
+            const categories = savedCats.length > 0 ? savedCats.map(c => c.name) : [...new Set(data.map(item => item.category))];
+            
             let hasResults = false;
 
             categories.forEach(cat => {
@@ -482,16 +493,15 @@
             const orderedCountText = translations[lang].ordered_count.replace('{n}', item.timesOrdered || '30');
 
             // Calculate discount percentage
-            let discountBadge = '';
             if (item.oldPrice && item.oldPrice > item.price) {
                 const discount = Math.round(((item.oldPrice - item.price) / item.oldPrice) * 100);
-                discountBadge = `<span class="badge-tag bg-red-500 text-white border-none"><span class="material-symbols-outlined text-[12px]">sell</span> خصم ${discount}%</span>`;
+                // Badge is now handled directly in the template below
             }
 
             return `
                 <div onclick="openModal('${item.id}')" class="group relative flex flex-col bg-white dark:bg-abyss-container border border-slate-100 dark:border-white/5 rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:shadow-2xl hover:-translate-y-2">
                     <!-- Discount Badge (Top Right) -->
-                    ${item.oldPrice && item.oldPrice > item.price ? `
+                    ${(item.oldPrice && item.oldPrice > item.price) ? `
                         <div class="absolute top-4 right-4 z-20">
                             <div class="bg-red-500 text-white px-3 py-1.5 rounded-xl font-black text-[11px] shadow-lg flex items-center gap-1.5 animate-pulse">
                                 <span class="material-symbols-outlined text-[14px]">sell</span>
@@ -524,7 +534,7 @@
                         <div class="flex justify-between items-center mt-auto border-t border-slate-50 dark:border-white/5 pt-4">
                             <div>
                                 <span class="text-[10px] block opacity-60 uppercase font-bold">${startsFrom}</span>
-                                ${item.oldPrice ? `<span class="text-xs text-slate-400 line-through mr-1">${item.oldPrice} ${currency}</span>` : ''}
+                                ${(item.oldPrice && item.oldPrice > item.price) ? `<span class="text-xs text-slate-400 line-through mr-1">${item.oldPrice} ${currency}</span>` : ''}
                                 <span class="text-2xl font-black text-secondary">${item.price} <span class="text-sm font-bold">${currency}</span></span>
                             </div>
                             ${item.isAvailable === false ? `
@@ -532,7 +542,7 @@
                                     <span class="text-sm">انتهى</span>
                                 </button>
                             ` : `
-                                <button class="bg-primary hover:bg-secondary text-white px-5 py-3 rounded-2xl font-bold flex items-center gap-2 transition-all active:scale-95">
+                                <button onclick="openModal('${item.id}')" class="bg-primary hover:bg-secondary text-white px-5 py-3 rounded-2xl font-bold flex items-center gap-2 transition-all active:scale-95">
                                     <span class="material-symbols-outlined text-lg">add</span>
                                     <span class="text-sm" data-i18n="btn_add_order">${translations[lang].btn_add_order}</span>
                                 </button>
@@ -724,7 +734,8 @@
                 options: { ...selectedOptions }
             };
 
-            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            // Update global cart variable
+            cart = JSON.parse(localStorage.getItem('cart') || '[]');
             cart.push(cartItem);
             localStorage.setItem('cart', JSON.stringify(cart));
             
@@ -787,6 +798,7 @@
 
         function removeFromCart(id) {
             cart = cart.filter(i => i.id !== id);
+            localStorage.setItem('cart', JSON.stringify(cart)); // Persist the deletion
             updateCartUI();
         }
 
@@ -857,6 +869,11 @@
             trackWhatsAppOrder();
 
             openWhatsApp(message);
+            
+            // Clear cart immediately
+            cart = [];
+            localStorage.removeItem('cart');
+            updateCartUI();
 
             // Toggle Success View
             document.getElementById('cart-items').classList.add('hidden');
@@ -918,12 +935,14 @@
 
         function resetCart() {
             cart = [];
+            localStorage.removeItem('cart'); // Clear from storage
             updateCartUI();
             document.getElementById('cart-items').classList.remove('hidden');
             document.getElementById('cart-footer').classList.remove('hidden');
             document.getElementById('cart-success-view').classList.add('hidden');
-            setRating(0);
-            document.getElementById('order-feedback').value = '';
+            if (typeof setRating === 'function') setRating(0);
+            const feedbackInput = document.getElementById('order-feedback');
+            if (feedbackInput) feedbackInput.value = '';
             toggleCart(false);
         }
 
