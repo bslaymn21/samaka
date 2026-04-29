@@ -80,7 +80,18 @@ function getSiteSettings() {
 }
 
 function getWhatsAppNumber() {
-    return getSiteSettings().whatsapp;
+    let num = getSiteSettings().whatsapp || "";
+    // Normalize: Remove spaces, dashes, plus sign
+    num = num.replace(/[\s\-\+]/g, '');
+    // If it starts with 01 (like 010...), it should be 201...
+    if (num.startsWith('01')) {
+        num = '2' + num;
+    }
+    // If it starts with 1 (like 10...), and is 10 digits, it should be 201...
+    else if (num.startsWith('1') && num.length === 10) {
+        num = '20' + num;
+    }
+    return num;
 }
 
 function getWhatsAppLink(message = "") {

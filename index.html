@@ -59,7 +59,7 @@
         <div class="relative flex flex-col items-center">
             <div class="mb-lg">
                 <img src="./assets/only logo.png" alt="Samaka Logo"
-                    class="h-80 w-auto relative z-10 logo-primary-filter animate-swim animate-glow" loading="eager">
+                    class="preloader-logo relative z-10 logo-primary-filter animate-swim animate-glow" loading="eager">
             </div>
         </div>
         <div class="w-full text-center space-y-md">
@@ -112,7 +112,7 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-6 py-xl pb-32">
+    <main class="max-w-7xl mx-auto px-6 py-xl pb-32 pb-safe-xl">
         <!-- Hero Section -->
         <div
             class="relative overflow-hidden mb-xl rounded-none md:rounded-3xl -mx-6 md:mx-0 min-h-[50vh] md:min-h-[400px] flex items-center justify-start px-8 md:px-16 shadow-2xl">
@@ -233,7 +233,7 @@
                     data-i18n="back_to_menu">العودة للمنيو</button>
             </div>
         </div>
-        <div id="cart-footer" class="p-6 border-t border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-black/20">
+        <div id="cart-footer" class="p-6 pb-safe border-t border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-black/20">
             <div class="flex justify-between items-center mb-4">
                 <span class="text-slate-500 font-bold" data-i18n="cart_total">Total</span>
                 <span id="cart-total-price" class="text-2xl font-bold text-secondary">0 ج.م</span>
@@ -270,7 +270,7 @@
 
     <!-- Bottom Nav -->
     <nav
-        class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center bg-white dark:bg-slate-900 px-2 pb-safe border-t border-slate-200 dark:border-slate-800 z-50 h-16">
+        class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center bg-white dark:bg-slate-900 px-2 pb-safe border-t border-slate-200 dark:border-slate-800 z-50 min-h-[4rem] h-auto">
         <a class="flex flex-col items-center justify-center text-primary dark:text-abyss-primary border-t-2 border-primary dark:border-abyss-primary pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
             href="index.html">
             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">restaurant_menu</span>
@@ -292,8 +292,7 @@
     </nav>
 
     <!-- Custom Notifications (Toast) -->
-    <div id="toast-container"
-        class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] space-y-3 w-full max-w-xs pointer-events-none"></div>
+
 
     <script src="./js/data.js"></script>
     <script type="module">
@@ -899,11 +898,16 @@
             const t = translations[currentLang];
             const total = cart.reduce((sum, item) => sum + item.price, 0);
 
+            // Normalize customer phone for display
+            let displayPhone = customerInfo.phone || "";
+            if (displayPhone.startsWith('0')) displayPhone = '+2' + displayPhone;
+            else if (!displayPhone.startsWith('+') && displayPhone.length === 11) displayPhone = '+2' + displayPhone;
+
             // Construct Message
             let message = `*${t.order_msg_header}*\n\n`;
             message += `*بيانات الزبون:*\n`;
             message += `👤 الاسم: ${customerInfo.name}\n`;
-            message += `📞 الهاتف: ${customerInfo.phone}\n`;
+            message += `📞 الهاتف: ${displayPhone}\n`;
             message += `🏠 العنوان: ${customerInfo.address}\n\n`;
             message += `------------------\n`;
             message += `*الأصناف:*\n`;
@@ -1167,7 +1171,7 @@
     <div id="checkout-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
         <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md" onclick="closeCheckoutModal()"></div>
         <div
-            class="relative bg-white dark:bg-slate-900 w-full max-w-xl rounded-[3rem] overflow-hidden shadow-2xl animate-in-up">
+            class="relative bg-white dark:bg-slate-900 w-full max-w-xl rounded-t-3xl md:rounded-[3rem] overflow-hidden shadow-2xl modal-content">
             <div class="p-8 md:p-12">
                 <div class="flex justify-between items-start mb-8">
                     <div>

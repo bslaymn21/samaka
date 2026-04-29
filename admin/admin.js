@@ -729,7 +729,14 @@ async function saveSettings(e) {
 
     fields.forEach(id => {
         const el = document.getElementById(`setting-${id}`);
-        if (el) settings[id] = el.value || settings[id] || '';
+        if (el) {
+            let val = el.value || '';
+            // Auto-normalize WhatsApp and Phone numbers for Egypt
+            if ((id === 'whatsapp' || id === 'phone') && val.startsWith('01')) {
+                val = '2' + val;
+            }
+            settings[id] = val || settings[id] || '';
+        }
     });
 
     const newPassword = document.getElementById('setting-new-password')?.value;
