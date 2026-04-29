@@ -74,7 +74,7 @@
         class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-white/10 docked full-width top-0 sticky z-50 transition-colors h-16 md:h-20">
         <div class="flex justify-between items-center w-full px-6 py-4 mx-auto max-w-container-max relative h-full">
             <a href="index.html" class="flex items-center absolute start-6 top-1/2 -translate-y-1/2 z-10">
-                <img src="./assets/only logo.png" alt="Samaka" class="h-20 md:h-28 w-auto">
+                <img src="./assets/only logo.png" alt="Samaka" class="h-12 md:h-20 w-auto">
             </a>
             <div class="flex-1"></div>
             <nav class="hidden md:flex gap-md items-center">
@@ -115,7 +115,7 @@
     <main class="max-w-7xl mx-auto px-6 py-xl pb-32">
         <!-- Hero Section -->
         <div
-            class="relative overflow-hidden mb-xl rounded-none md:rounded-3xl -mx-6 md:mx-0 min-h-[50vh] md:min-h-[400px] flex items-center justify-center md:justify-start px-8 md:px-16 shadow-2xl">
+            class="relative overflow-hidden mb-xl rounded-none md:rounded-3xl -mx-6 md:mx-0 min-h-[50vh] md:min-h-[400px] flex items-center justify-start px-8 md:px-16 shadow-2xl">
             <div class="absolute inset-0 z-0">
                 <img id="menu-hero-img" class="w-full h-full object-cover animate-ken-burns"
                     src="./assets/first size.png">
@@ -124,21 +124,39 @@
                     class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r rtl:md:bg-gradient-to-l from-black/80 via-transparent to-transparent">
                 </div>
             </div>
-            <div class="relative z-10 w-full max-w-2xl text-center md:text-start">
-                <h1 id="menu-hero-title" class="font-h1 text-6xl md:text-6xl text-white mb-0 md:mb-base drop-shadow-2xl" data-i18n="menu_title">
+            <div class="relative z-10 w-full max-w-2xl text-start">
+                <h1 id="menu-hero-title" class="font-h1 text-4xl md:text-6xl text-white mb-0 md:mb-base drop-shadow-2xl"
+                    data-i18n="menu_title">
                     قائمة الطعام</h1>
             </div>
         </div>
 
         <!-- Filter Chips -->
-        <div id="filter-container"
-            class="flex justify-start gap-4 overflow-x-auto pb-6 no-scrollbar mb-10 border-b border-slate-100 dark:border-white/5">
-            <!-- Filter buttons loaded dynamically -->
-             <div class="animate-pulse flex items-center gap-4">
-                 <div class="h-10 w-24 bg-slate-200 dark:bg-white/10 rounded-full"></div>
-                 <div class="h-10 w-24 bg-slate-200 dark:bg-white/10 rounded-full"></div>
-                 <div class="h-10 w-24 bg-slate-200 dark:bg-white/10 rounded-full"></div>
-             </div>
+        <div class="flex items-center gap-2 mb-6 opacity-60 dark:text-white pr-2">
+            <span class="material-symbols-outlined text-[18px]">explore</span>
+            <h3 class="text-[10px] md:text-xs font-black uppercase tracking-[0.2em]">تصفح خلال القوائم السريعة</h3>
+        </div>
+        <div class="relative group mb-10">
+            <!-- Scroll Buttons (Desktop Only) -->
+            <button onclick="scrollFilters(-1)"
+                class="absolute -start-5 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-white dark:bg-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-full hidden md:flex items-center justify-center text-primary dark:text-white border border-slate-100 dark:border-white/10 hover:bg-secondary hover:text-white hover:scale-110 transition-all">
+                <span class="material-symbols-outlined text-2xl">chevron_right</span>
+            </button>
+
+            <div id="filter-container"
+                class="flex justify-start gap-4 overflow-x-auto pb-6 no-scrollbar border-b border-slate-100 dark:border-white/5 scroll-smooth">
+                <!-- Filter buttons loaded dynamically -->
+                <div class="animate-pulse flex items-center gap-4">
+                    <div class="h-10 w-24 bg-slate-200 dark:bg-white/10 rounded-full"></div>
+                    <div class="h-10 w-24 bg-slate-200 dark:bg-white/10 rounded-full"></div>
+                    <div class="h-10 w-24 bg-slate-200 dark:bg-white/10 rounded-full"></div>
+                </div>
+            </div>
+
+            <button onclick="scrollFilters(1)"
+                class="absolute -end-5 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-white dark:bg-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-full hidden md:flex items-center justify-center text-primary dark:text-white border border-slate-100 dark:border-white/10 hover:bg-secondary hover:text-white hover:scale-110 transition-all">
+                <span class="material-symbols-outlined text-2xl">chevron_left</span>
+            </button>
         </div>
 
         <!-- Menu Container -->
@@ -193,11 +211,11 @@
                 </div>
 
                 <div class="space-y-4">
-                    <input type="text" id="feedback-name" 
+                    <input type="text" id="feedback-name"
                         class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-sm focus:ring-2 focus:ring-secondary outline-none"
                         placeholder="الأسم بالكامل">
-                    
-                    <input type="tel" id="feedback-phone" 
+
+                    <input type="tel" id="feedback-phone"
                         class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 text-sm focus:ring-2 focus:ring-secondary outline-none"
                         placeholder="رقم التليفون (للتواصل)">
                 </div>
@@ -229,10 +247,11 @@
     </div>
 
     <!-- Dish Modal -->
-    <div id="dish-modal" class="fixed inset-0 z-[100] modal-overlay items-center justify-center p-4">
+    <div id="dish-modal" class="fixed inset-0 z-[100] modal-overlay items-center justify-center p-4"
+        onclick="if(event.target === this) closeModal()">
         <div class="absolute inset-0" onclick="closeModal()"></div>
-        <div
-            class="bg-white dark:bg-abyss-container w-full max-w-4xl rounded-[32px] shadow-3xl overflow-hidden relative z-10 modal-content max-h-[85vh] md:max-h-[90vh] flex flex-col">
+        <div class="bg-white dark:bg-abyss-container w-full max-w-4xl rounded-[32px] shadow-3xl overflow-hidden relative z-10 modal-content max-h-[85vh] md:max-h-[90vh] flex flex-col"
+            onclick="event.stopPropagation()">
             <div id="modal-content-container" class="overflow-y-auto flex-grow no-scrollbar">
                 <!-- Content injected here -->
             </div>
@@ -365,7 +384,7 @@
             // Global Contact Updates
             const addrEl = document.getElementById('footer-address');
             const addrLink = document.getElementById('footer-address-link');
-            
+
             if (addrEl) {
                 if (settings.address_ar) {
                     addrEl.innerText = settings.address_ar;
@@ -441,13 +460,13 @@
             // Get categories from localStorage to maintain sorting
             const savedCats = JSON.parse(localStorage.getItem('samaka_categories') || '[]');
             const categories = savedCats.length > 0 ? savedCats.map(c => c.name) : [...new Set(data.map(item => item.category))];
-            
+
             let hasResults = false;
 
             categories.forEach(cat => {
                 if (filter !== 'all' && cat !== filter) return;
 
-                const items = data.filter(item => item.category === cat);
+                const items = data.filter(item => item.category === cat).sort((a, b) => (a.order || 999) - (b.order || 999));
                 if (items.length === 0) return;
                 hasResults = true;
 
@@ -473,7 +492,7 @@
                     </div>
                     <div class="flex overflow-x-auto pb-8 -mx-6 px-6 md:mx-0 md:px-0 scroll-smooth snap-x snap-mandatory no-scrollbar md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                         ${items.map(item => `
-                            <div class="w-[85vw] md:w-full flex-shrink-0 snap-center md:snap-align-none">
+                            <div class="w-[80vw] md:w-full flex-shrink-0 snap-center md:snap-align-none">
                                 ${createMenuItemHTML(item, currentLang)}
                             </div>
                         `).join('')}
@@ -520,7 +539,7 @@
                     <div class="aspect-[4/3] overflow-hidden ${item.isAvailable === false ? 'grayscale opacity-60' : ''}">
                         <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="${item.images[0]}">
                     </div>
-                    <div class="p-6">
+                    <div class="p-4 md:p-6">
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="font-h3 text-xl text-primary dark:text-white group-hover:text-secondary transition-colors">${name}</h3>
                         </div>
@@ -630,14 +649,14 @@
                                         <label class="option-label">${t.cooking_method}</label>
                                         <div class="flex flex-wrap gap-2">
                                             ${item.options.methods.map((m, idx) => {
-                                                const mName = typeof m === 'string' ? m : m.name;
-                                                const mPrice = typeof m === 'object' ? m.price : null;
-                                                if (idx === 0) {
-                                                    selectedOptions.method = mName;
-                                                    selectedOptions.methodPrice = mPrice;
-                                                }
-                                                return `<div onclick="selectVariantOption('method', '${mName}', ${mPrice}, this)" class="option-chip ${idx === 0 ? 'active' : ''}">${mName} ${mPrice ? `<span class="text-[10px] opacity-70 mr-1">(+${mPrice})</span>` : ''}</div>`;
-                                            }).join('')}
+                const mName = typeof m === 'string' ? m : m.name;
+                const mPrice = typeof m === 'object' ? m.price : null;
+                if (idx === 0) {
+                    selectedOptions.method = mName;
+                    selectedOptions.methodPrice = mPrice;
+                }
+                return `<div onclick="selectVariantOption('method', '${mName}', ${mPrice}, this)" class="option-chip ${idx === 0 ? 'active' : ''}">${mName} ${mPrice ? `<span class="text-[10px] opacity-70 mr-1">(+${mPrice})</span>` : ''}</div>`;
+            }).join('')}
                                         </div>
                                     </div>
                                 ` : ''}
@@ -647,14 +666,14 @@
                                         <label class="option-label">${t.size}</label>
                                         <div class="flex flex-wrap gap-2">
                                             ${item.options.sizes.map((s, idx) => {
-                                                const sName = typeof s === 'string' ? s : s.name;
-                                                const sPrice = typeof s === 'object' ? s.price : null;
-                                                if (idx === 0) {
-                                                    selectedOptions.size = sName;
-                                                    selectedOptions.sizePrice = sPrice;
-                                                }
-                                                return `<div onclick="selectVariantOption('size', '${sName}', ${sPrice}, this)" class="option-chip ${idx === 0 ? 'active' : ''}">${sName}</div>`;
-                                            }).join('')}
+                const sName = typeof s === 'string' ? s : s.name;
+                const sPrice = typeof s === 'object' ? s.price : null;
+                if (idx === 0) {
+                    selectedOptions.size = sName;
+                    selectedOptions.sizePrice = sPrice;
+                }
+                return `<div onclick="selectVariantOption('size', '${sName}', ${sPrice}, this)" class="option-chip ${idx === 0 ? 'active' : ''}">${sName}</div>`;
+            }).join('')}
                                         </div>
                                     </div>
                                 ` : ''}
@@ -664,8 +683,8 @@
                                         <label class="option-label">مشتملات / ميزات الوجبة</label>
                                         <div class="flex flex-wrap gap-3">
                                             ${item.options.types.map((tp) => {
-                                                return `<div class="bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-500/30 px-5 py-2.5 rounded-2xl text-sm md:text-base font-black flex items-center gap-2 cursor-default shadow-sm"><span class="material-symbols-outlined text-[20px]">done_all</span> ${tp}</div>`;
-                                            }).join('')}
+                return `<div class="bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-500/30 px-5 py-2.5 rounded-2xl text-sm md:text-base font-black flex items-center gap-2 cursor-default shadow-sm"><span class="material-symbols-outlined text-[20px]">done_all</span> ${tp}</div>`;
+            }).join('')}
                                         </div>
                                     </div>
                                 ` : ''}
@@ -681,7 +700,7 @@
                     </div>
                 </div>
             `;
-            
+
             window.activeItemBasePrice = Number(item.price);
             window.activeItemCurrency = t.price_currency;
             document.getElementById('dish-modal').classList.add('active');
@@ -696,7 +715,7 @@
             el.classList.add('active');
             updateModalPrice();
         }
-        
+
         function updateModalPrice() {
             let total = window.activeItemBasePrice;
             if (selectedOptions.sizePrice) {
@@ -712,6 +731,16 @@
         function closeModal() {
             document.getElementById('dish-modal').classList.remove('active');
             document.body.style.overflow = '';
+        }
+
+        function scrollFilters(direction) {
+            const container = document.getElementById('filter-container');
+            if (!container) return;
+            const scrollAmount = 300;
+            // In RTL, the scroll direction is reversed
+            const isRTL = document.documentElement.dir === 'rtl';
+            const move = isRTL ? -direction * scrollAmount : direction * scrollAmount;
+            container.scrollBy({ left: move, behavior: 'smooth' });
         }
 
         function slideGallery(direction) {
@@ -738,7 +767,7 @@
             cart = JSON.parse(localStorage.getItem('cart') || '[]');
             cart.push(cartItem);
             localStorage.setItem('cart', JSON.stringify(cart));
-            
+
             closeModal();
             updateCartUI();
             toggleCart(true);
@@ -832,12 +861,52 @@
                 return;
             }
 
+            // Open Checkout Modal instead of sending immediately
+            openCheckoutModal();
+        }
+
+        function openCheckoutModal() {
+            const modal = document.getElementById('checkout-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            // Pre-fill from localStorage
+            const savedInfo = JSON.parse(localStorage.getItem('matamkom_customer_info') || '{}');
+            if (savedInfo.name) document.getElementById('cust-name').value = savedInfo.name;
+            if (savedInfo.phone) document.getElementById('cust-phone').value = savedInfo.phone;
+            if (savedInfo.address) document.getElementById('cust-address').value = savedInfo.address;
+        }
+
+        function closeCheckoutModal() {
+            const modal = document.getElementById('checkout-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        async function handleCheckoutSubmit(event) {
+            event.preventDefault();
+
+            const customerInfo = {
+                name: document.getElementById('cust-name').value,
+                phone: document.getElementById('cust-phone').value,
+                address: document.getElementById('cust-address').value
+            };
+
+            // Persist for next time
+            localStorage.setItem('matamkom_customer_info', JSON.stringify(customerInfo));
+
             const currentLang = localStorage.getItem('preferred_language') || 'en';
             const t = translations[currentLang];
             const total = cart.reduce((sum, item) => sum + item.price, 0);
 
-            let message = `${t.order_msg_header}\n\n`;
-            message += `${t.order_msg_hello}\n\n`;
+            // Construct Message
+            let message = `*${t.order_msg_header}*\n\n`;
+            message += `*بيانات الزبون:*\n`;
+            message += `👤 الاسم: ${customerInfo.name}\n`;
+            message += `📞 الهاتف: ${customerInfo.phone}\n`;
+            message += `🏠 العنوان: ${customerInfo.address}\n\n`;
+            message += `------------------\n`;
+            message += `*الأصناف:*\n`;
 
             cart.forEach((item, index) => {
                 message += `${index + 1}. *${item.name}*\n`;
@@ -850,36 +919,48 @@
             message += `*${t.cart_total}: ${total} ${t.price_currency}*`;
 
             const orderId = 'ORD-' + Date.now();
-            // Save to local logs for Admin
             const orderData = {
                 id: orderId,
                 timestamp: new Date().toISOString(),
                 items: cart,
                 total: total,
-                status: 'pending'
+                status: 'pending',
+                userName: customerInfo.name,
+                phone: customerInfo.phone,
+                address: customerInfo.address
             };
-            const orders = JSON.parse(localStorage.getItem('matamkom_orders_logs') || '[]');
-            orders.push(orderData);
-            localStorage.setItem('matamkom_orders_logs', JSON.stringify(orders));
 
-            // Save Order to Real Firestore
-            saveOrder(orderData);
+            try {
+                // Save Order to Real Firestore
+                await saveOrder(orderData);
 
-            // Track Real Conversion
-            trackWhatsAppOrder();
+                // Track Real Conversion
+                trackWhatsAppOrder();
 
-            openWhatsApp(message);
-            
-            // Clear cart immediately
-            cart = [];
-            localStorage.removeItem('cart');
-            updateCartUI();
+                // Open WhatsApp
+                openWhatsApp(message);
 
-            // Toggle Success View
-            document.getElementById('cart-items').classList.add('hidden');
-            document.getElementById('cart-footer').classList.add('hidden');
-            document.getElementById('cart-success-view').classList.remove('hidden');
-            window.currentOrderId = orderId;
+                // Close Modal
+                closeCheckoutModal();
+
+                // Clear cart immediately
+                cart = [];
+                localStorage.removeItem('cart');
+                updateCartUI();
+
+                // Toggle Success View in drawer if open
+                const itemsList = document.getElementById('cart-items');
+                const cartFooter = document.getElementById('cart-footer');
+                const successView = document.getElementById('cart-success-view');
+                if (itemsList) itemsList.classList.add('hidden');
+                if (cartFooter) cartFooter.classList.add('hidden');
+                if (successView) successView.classList.remove('hidden');
+
+                window.currentOrderId = orderId;
+            } catch (err) {
+                console.error(err);
+                showNotification('حدث خطأ أثناء حفظ الطلب، يرجى المحاولة مرة أخرى', 'error');
+            }
         }
 
         let currentRating = 0;
@@ -990,7 +1071,7 @@
                         <div>
                             <h4 class="font-bold text-sm text-primary dark:text-white">${f.name || 'عميل مجهول'}</h4>
                             <div class="flex gap-0.5 mt-1">
-                                ${Array.from({length: 5}).map((_, i) => `
+                                ${Array.from({ length: 5 }).map((_, i) => `
                                     <span class="material-symbols-outlined text-[12px] ${i < (f.rating || 5) ? 'text-amber-500' : 'text-slate-200'}" style="font-variation-settings: 'FILL' 1;">star</span>
                                 `).join('')}
                             </div>
@@ -1005,6 +1086,9 @@
         window.showNotification = showNotification;
         window.openModal = openModal;
         window.closeModal = closeModal;
+        window.openCheckoutModal = openCheckoutModal;
+        window.closeCheckoutModal = closeCheckoutModal;
+        window.handleCheckoutSubmit = handleCheckoutSubmit;
         window.addToOrder = addToOrder;
         window.selectVariantOption = selectVariantOption;
         window.removeFromCart = removeFromCart;
@@ -1016,34 +1100,42 @@
         window.submitFeedback = submitFeedback;
         window.resetCart = resetCart;
         window.toggleAllReviews = toggleAllReviews;
+        window.scrollFilters = scrollFilters;
     </script>
 
     <!-- Footer -->
-    <footer class="bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 full-width py-16 transition-colors mb-20 md:mb-0 text-right">
+    <footer
+        class="bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 full-width py-16 transition-colors mb-20 md:mb-0 text-right">
         <div class="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-3 gap-12">
             <!-- Contact Link -->
             <div class="space-y-6">
-                <h4 class="text-xs font-black text-primary dark:text-white uppercase tracking-widest">معلومات التواصل</h4>
+                <h4 class="text-xs font-black text-primary dark:text-white uppercase tracking-widest">معلومات التواصل
+                </h4>
                 <div class="space-y-4">
                     <div class="flex items-start gap-3">
                         <span class="material-symbols-outlined text-secondary text-lg">location_on</span>
                         <div>
                             <a id="footer-address-link" href="#" target="_blank" class="block">
-                                <p id="footer-address" class="text-sm font-bold text-slate-600 dark:text-slate-300 italic hover:text-secondary transition-colors">جاري تحميل العنوان...</p>
+                                <p id="footer-address"
+                                    class="text-sm font-bold text-slate-600 dark:text-slate-300 italic hover:text-secondary transition-colors">
+                                    جاري تحميل العنوان...</p>
                             </a>
                         </div>
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="material-symbols-outlined text-secondary text-lg">schedule</span>
                         <div>
-                            <p id="footer-hours" class="text-sm font-bold text-slate-600 dark:text-slate-300 italic">جاري تحميل المواعيد...</p>
+                            <p id="footer-hours" class="text-sm font-bold text-slate-600 dark:text-slate-300 italic">
+                                جاري تحميل المواعيد...</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="material-symbols-outlined text-secondary text-lg">call</span>
                         <div>
                             <a id="footer-phone-link" href="#">
-                                <p id="footer-phone" class="text-sm font-bold text-slate-600 dark:text-slate-300 italic">جاري تحميل الهاتف...</p>
+                                <p id="footer-phone"
+                                    class="text-sm font-bold text-slate-600 dark:text-slate-300 italic">جاري تحميل
+                                    الهاتف...</p>
                             </a>
                         </div>
                     </div>
@@ -1054,16 +1146,72 @@
             <div class="space-y-6">
                 <h4 class="text-xs font-black text-primary dark:text-white uppercase tracking-widest">روابط سريعة</h4>
                 <ul class="space-y-3">
-                    <li><a href="index.html" class="text-sm font-bold text-slate-500 hover:text-secondary transition-colors">المنيو</a></li>
-                    <li><a href="about.html" class="text-sm font-bold text-slate-500 hover:text-secondary transition-colors">عن سمكة</a></li>
-                    <li><a href="contact.html" class="text-sm font-bold text-slate-500 hover:text-secondary transition-colors">اتصل بنا</a></li>
+                    <li><a href="index.html"
+                            class="text-sm font-bold text-slate-500 hover:text-secondary transition-colors">المنيو</a>
+                    </li>
+                    <li><a href="about.html"
+                            class="text-sm font-bold text-slate-500 hover:text-secondary transition-colors">عن سمكة</a>
+                    </li>
+                    <li><a href="contact.html"
+                            class="text-sm font-bold text-slate-500 hover:text-secondary transition-colors">اتصل بنا</a>
+                    </li>
                 </ul>
             </div>
         </div>
         <div class="max-w-7xl mx-auto px-8 mt-16 pt-8 border-t border-slate-100 dark:border-white/5 text-center">
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">© 2026 SAMAKA. PRECISELY SOURCED.</p>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">© 2026 SAMAKA. PRECISELY SOURCED.
+            </p>
         </div>
     </footer>
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md" onclick="closeCheckoutModal()"></div>
+        <div
+            class="relative bg-white dark:bg-slate-900 w-full max-w-xl rounded-[3rem] overflow-hidden shadow-2xl animate-in-up">
+            <div class="p-8 md:p-12">
+                <div class="flex justify-between items-start mb-8">
+                    <div>
+                        <h2 class="text-3xl font-black text-primary dark:text-white mb-2">بيانات التوصيل</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 font-bold italic">من فضلك أدخل بياناتك
+                            لتأكيد الطلب</p>
+                    </div>
+                    <button onclick="closeCheckoutModal()"
+                        class="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-100 dark:bg-white/5 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+
+                <form id="checkout-form" onsubmit="handleCheckoutSubmit(event)" class="space-y-6">
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-400 uppercase tracking-widest pr-2">الاسم
+                            الكامل</label>
+                        <input type="text" id="cust-name" required placeholder="مثال: أحمد محمد"
+                            class="w-full bg-slate-50 dark:bg-white/5 border-none rounded-2xl p-5 text-sm font-bold ring-1 ring-slate-100 dark:ring-white/10 focus:ring-2 focus:ring-secondary transition-all dark:text-white">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-400 uppercase tracking-widest pr-2">رقم الهاتف</label>
+                        <input type="tel" id="cust-phone" required placeholder="010..." class="w-full bg-slate-50 dark:bg-white/5 border-none rounded-2xl p-5 text-sm font-bold ring-1 ring-slate-100 dark:ring-white/10 focus:ring-2 focus:ring-secondary transition-all dark:text-white">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-400 uppercase tracking-widest pr-2">العنوان
+                            بالتفصيل</label>
+                        <textarea id="cust-address" required rows="3" placeholder="الشارع، رقم العمارة، الدور..."
+                            class="w-full bg-slate-50 dark:bg-white/5 border-none rounded-2xl p-5 text-sm font-bold ring-1 ring-slate-100 dark:ring-white/10 focus:ring-2 focus:ring-secondary transition-all dark:text-white resize-none"></textarea>
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="submit"
+                            class="w-full bg-secondary hover:bg-primary text-white py-6 rounded-[2rem] font-black text-lg tracking-widest shadow-xl shadow-secondary/20 transition-all flex items-center justify-center gap-4 active:scale-95">
+                            <span>إتمام الطلب وإرسال لواتساب</span>
+                            <span class="material-symbols-outlined">send</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div id="toast-container"></div>
 </body>
 

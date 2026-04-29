@@ -15,7 +15,8 @@ import {
     getCategories,
     saveCategory,
     deleteCategory,
-    updateAdminPassword
+    updateAdminPassword,
+    bulkSaveMenuItems
 } from '../database/services.js';
 import { uploadToCloudinary } from '../js/cloudinary.js';
 
@@ -24,6 +25,38 @@ const adminSession = JSON.parse(localStorage.getItem('admin_session') || session
 if (!adminSession) {
     window.location.href = 'login.html';
 }
+
+// Global Exports (Defined at top to be available for HTML onclick handlers immediately)
+window.switchTab = switchTab;
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.toggleSidebar = toggleSidebar;
+window.closeSidebar = closeSidebar;
+window.toggleNotifications = toggleNotifications;
+window.saveSettings = saveSettings;
+window.logout = () => {
+    localStorage.removeItem('admin_session');
+    sessionStorage.removeItem('admin_session');
+    window.location.href = 'login.html';
+};
+window.editItem = editItem;
+window.deleteItem = deleteItem;
+window.toggleAvailability = toggleAvailability;
+window.generateQRCode = generateQRCode;
+window.downloadQRCode = downloadQRCode;
+window.handleImageSelection = handleImageSelection;
+window.removeImage = removeImage;
+window.handleAddCategory = handleAddCategory;
+window.handleDeleteCategory = handleDeleteCategory;
+window.calculateDiscountPrice = calculateDiscountPrice;
+window.calculateDiscountPercentage = calculateDiscountPercentage;
+window.addTypeTag = addTypeTag;
+window.removeTypeTag = removeTypeTag;
+window.addCustomVariant = addCustomVariant;
+window.filterMenuItemsByCategory = filterMenuItemsByCategory;
+window.toggleFeedbackVisibility = toggleFeedbackVisibility;
+window.reorderCategory = reorderCategory;
+window.toggleOrderDropdown = toggleOrderDropdown;
 
 let currentData = [];
 let categories = [];
@@ -83,6 +116,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Form listener
     const itemForm = document.getElementById('item-form');
     if (itemForm) itemForm.addEventListener('submit', handleFormSubmit);
+
+    const catSelect = document.getElementById('item-category');
+    if (catSelect) {
+        catSelect.addEventListener('change', (e) => {
+            updateOrderDropdown(e.target.value);
+        });
+    }
+
 
     // Force Arabic for Admin Dashboard Demo
     localStorage.setItem('preferred_language', 'ar');
@@ -304,8 +345,8 @@ async function renderComments() {
                     </a>` : '<div></div>'}
                     
                     <button onclick="window.toggleFeedbackVisibility('${f.id}', ${!isShown})" 
-                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black transition-all ${isShown ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-slate-100 dark:bg-white/10 text-slate-500'}">
-                        <span class="material-symbols-outlined text-[14px]">${isShown ? 'visibility' : 'visibility_off'}</span>
+                        class="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[11px] font-black transition-all ${isShown ? 'bg-emerald-500 text-white shadow-xl shadow-emerald-500/30' : 'bg-slate-100 dark:bg-white/10 text-slate-500'}">
+                        <span class="material-symbols-outlined text-[18px]">${isShown ? 'visibility' : 'visibility_off'}</span>
                         ${isShown ? 'يظهر بالرئيسية' : 'مخفي حالياً'}
                     </button>
                 </div>
@@ -317,9 +358,11 @@ async function renderComments() {
 async function toggleFeedbackVisibility(id, newStatus) {
     try {
         await updateFeedbackStatus(id, newStatus);
+        showNotification(newStatus ? 'تم التفعيل: سيظهر التعليق في الصفحة الرئيسية ✨' : 'تم الإخفاء من الصفحة الرئيسية');
         renderComments(); // Refresh list
     } catch (e) {
         console.error("Error updating status", e);
+        showNotification('فشل تحديث حالة التعليق', 'error');
     }
 }
 
@@ -330,16 +373,6 @@ function loadDashboardTables() {
     renderOrders();
 }
 
-function getStatusBadge(status) {
-    const configs = {
-        pending: { label: 'قيد الانتظار', class: 'bg-amber-50 text-amber-600 ring-1 ring-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:ring-amber-500/20' },
-        confirmed: { label: 'مؤكد', class: 'bg-blue-50 text-[#0058bc] ring-1 ring-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:ring-blue-500/20' },
-        delivered: { label: 'تم التوصيل', class: 'bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20' },
-        cancelled: { label: 'ملغي', class: 'bg-rose-50 text-rose-600 ring-1 ring-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:ring-rose-500/20' }
-    };
-    const config = configs[status] || configs.pending;
-    return `<span class="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider ${config.class}">${config.label}</span>`;
-}
 
 async function renderOrders() {
     const tbody = document.getElementById('orders-table-body');
@@ -356,9 +389,9 @@ async function renderOrders() {
 
         tbody.innerHTML = logs.map(log => {
             const idShort = (log.id || '0000').toString().slice(-4);
-            const dateStr = log.createdAt ? new Date(log.createdAt).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '';
+            const dateStr = log.timestamp ? new Date(log.timestamp).toLocaleString('ar-EG', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'numeric' }) : '';
             const itemsSummary = (log.items || []).map(i => `${i.quantity}x ${i.name}`).join('، ');
-            
+
             return `
                 <div class="flex flex-col md:grid md:grid-cols-5 gap-3 md:gap-0 p-5 md:px-10 md:py-6 hover:bg-slate-50/50 dark:hover:bg-white/5 transition-all group relative border-b border-slate-100 dark:border-white/5 last:border-0">
                     <!-- Order ID -->
@@ -373,6 +406,7 @@ async function renderOrders() {
                         <div class="text-right md:text-start">
                             <div class="font-bold text-slate-900 dark:text-slate-100 text-xs md:text-sm">${log.userName || 'زبون خارجي'}</div>
                             <div class="text-[10px] text-slate-400 font-bold mt-0.5">${log.phone || ''}</div>
+                            ${log.address ? `<div class="text-[9px] text-slate-400 mt-0.5 max-w-[150px] leading-tight">${log.address}</div>` : ''}
                         </div>
                     </div>
                     
@@ -388,11 +422,15 @@ async function renderOrders() {
                         <span class="md:hidden text-[10px] font-black text-slate-400 uppercase tracking-widest">الإجمالي</span>
                         <span class="font-black text-slate-900 dark:text-white text-xs md:text-sm">${log.total || '0'} جم</span>
                     </div>
-                    
-                    <!-- Status -->
-                    <div class="flex justify-between items-center md:block">
-                        <span class="md:hidden text-[10px] font-black text-slate-400 uppercase tracking-widest">الحالة</span>
-                        <div class="scale-90 md:scale-100 origin-right transition-transform">${getStatusBadge(log.status || 'pending')}</div>
+
+                    <!-- Actions -->
+                    <div class="flex justify-end items-center gap-2">
+                        <button onclick="printOrder('${log.id}')" class="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all shadow-sm" title="طباعة فاتورة">
+                            <span class="material-symbols-outlined text-sm md:text-base">print</span>
+                        </button>
+                        <button onclick="handleDeleteOrder('${log.id}')" class="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-all shadow-sm">
+                            <span class="material-symbols-outlined text-sm md:text-base">delete</span>
+                        </button>
                     </div>
                 </div>
             `;
@@ -400,11 +438,90 @@ async function renderOrders() {
     } catch (e) { console.error("Orders Error:", e); }
 }
 
-async function handleStatusUpdate(id, newStatus) {
-    if (await updateOrderStatus(id, newStatus)) {
-        await renderOrders();
-    }
+
+async function printOrder(id) {
+    try {
+        const logs = await getOrders();
+        const log = logs.find(l => l.id === id);
+        if (!log) return;
+
+        const printWindow = window.open('', '_blank');
+        const itemsHtml = (log.items || []).map(i => `
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #eee;">
+                <span>${i.name} (x${i.quantity})</span>
+                <b>${i.price} جم</b>
+            </div>
+            <div style="font-size: 10px; color: #666; margin-bottom: 5px;">
+                ${i.options.method} | ${i.options.size}
+            </div>
+        `).join('');
+
+        const date = new Date(log.timestamp).toLocaleString('ar-EG');
+
+        printWindow.document.write(`
+            <html dir="rtl">
+            <head>
+                <title>فاتورة - ${log.id}</title>
+                <style>
+                    body { font-family: 'Arial', sans-serif; padding: 40px; color: #333; line-height: 1.6; }
+                    .header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid #333; padding-bottom: 20px; }
+                    .header h1 { margin: 0; font-size: 28px; }
+                    .info { margin-bottom: 30px; display: grid; grid-cols: 2; gap: 20px; }
+                    .section-title { font-weight: bold; margin-bottom: 15px; background: #f9f9f9; padding: 5px 10px; border-right: 4px solid #333; }
+                    .items { margin-bottom: 30px; }
+                    .total { text-align: left; font-size: 20px; font-weight: bold; margin-top: 30px; border-top: 2px solid #333; padding-top: 15px; }
+                    .footer { text-align: center; margin-top: 60px; font-size: 12px; color: #888; border-top: 1px solid #eee; pt: 20px; }
+                    @media print { .no-print { display: none; } }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>مطعم سمكة</h1>
+                    <p>فاتورة مبيعات</p>
+                </div>
+                
+                <div class="info">
+                    <div>
+                        <div class="section-title">بيانات العميل</div>
+                        <p>👤 الاسم: ${log.userName || 'غير معروف'}</p>
+                        <p>📞 الهاتف: ${log.phone || '-'}</p>
+                        <p>🏠 العنوان: ${log.address || '-'}</p>
+                    </div>
+                    <div>
+                        <div class="section-title">بيانات الطلب</div>
+                        <p>🆔 رقم الطلب: #${log.id.slice(-6)}</p>
+                        <p>📅 التاريخ: ${date}</p>
+                    </div>
+                </div>
+
+                <div class="items">
+                    <div class="section-title">الوجبات</div>
+                    ${itemsHtml}
+                </div>
+
+                <div class="total">
+                    الإجمالي: ${log.total} جم
+                </div>
+
+                <div class="footer">
+                    شكراً لتعاملك مع سمكة!<br>
+                    تم إنشاء الفاتورة إلكترونياً
+                </div>
+
+                <script>
+                    window.onload = function() {
+                        window.print();
+                        // window.close();
+                    };
+                </script>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+    } catch (e) { console.error(e); }
 }
+
+window.printOrder = printOrder;
 
 async function handleDeleteOrder(id) {
     // We can keep the confirm for destructive actions, or use a custom modal later.
@@ -543,7 +660,7 @@ async function loadSettings() {
     const fields = [
         'whatsapp', 'phone', 'address_ar', 'menuHeroTitleEn',
         'mapLink', 'hours_ar',
-        'hours_en', 'social_fb', 'social_insta'
+        'hours_en', 'social_fb', 'social_insta', 'social_tiktok'
     ];
 
     fields.forEach(id => {
@@ -594,7 +711,7 @@ async function saveSettings(e) {
     const fields = [
         'whatsapp', 'phone', 'address_ar', 'menuHeroTitleEn',
         'mapLink', 'hours_ar',
-        'hours_en', 'social_fb', 'social_insta'
+        'hours_en', 'social_fb', 'social_insta', 'social_tiktok'
     ];
 
     const settings = {
@@ -770,7 +887,30 @@ function downloadQRCode() {
     link.click();
 }
 
+function updateOrderDropdown(category, currentOrder = null) {
+    const select = document.getElementById('item-order');
+    if (!select) return;
+
+    // Get count of items in this category
+    const itemsInCat = currentData.filter(i => i.category === category);
+    const count = itemsInCat.length;
+
+    // If adding new, we can place it up to count + 1
+    const isEditing = document.getElementById('item-id').value;
+    const max = isEditing ? count : count + 1;
+
+    select.innerHTML = '<option value="">تلقائي (في النهاية)</option>';
+    for (let i = 1; i <= Math.max(max, 1); i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.innerText = `الترتيب رقم ${i}`;
+        if (currentOrder == i) option.selected = true;
+        select.appendChild(option);
+    }
+}
+
 function openModal() {
+
     selectedFiles = [];
     existingUrls = [];
     document.getElementById('item-id').value = '';
@@ -779,6 +919,7 @@ function openModal() {
     document.getElementById('image-previews').innerHTML = '';
     document.getElementById('item-show-home').checked = true;
     document.getElementById('item-discount-pct').value = '';
+    updateOrderDropdown(document.getElementById('item-category').value);
 
     // Reset Checkboxes, Tags & Price Inputs
     document.querySelectorAll('.custom-variant-label').forEach(el => el.remove());
@@ -844,14 +985,42 @@ async function handleFormSubmit(e) {
                 methods: selectedMethods,
                 types: document.getElementById('item-options-types').value.split(',').map(s => s.trim()).filter(s => s)
             },
+            order: parseInt(document.getElementById('item-order').value) || 999,
             updatedAt: new Date().toISOString()
         };
 
         if (id) itemData.id = id;
+        else {
+            // Generate new ID if creating
+            submitBtn.innerText = 'جاري تهيئة البيانات...';
+            itemData.id = await saveMenuItem(itemData);
+        }
 
-        submitBtn.innerText = 'جاري حفظ البيانات...';
-        await saveMenuItem(itemData);
-        showNotification('تم حفظ بيانات الوجبة بنجاح ✨');
+        // Production-Grade Reordering (Normalization + Batch)
+        submitBtn.innerText = 'جاري ترتيب القائمة...';
+        const newOrder = parseInt(document.getElementById('item-order').value);
+        let categoryItems = currentData.filter(i => i.category === itemData.category && i.id !== itemData.id);
+
+        // Sort existing items to ensure clean sequence
+        categoryItems.sort((a, b) => (a.order || 999) - (b.order || 999));
+
+        if (!isNaN(newOrder)) {
+            // Insert current item at the target position (1-based index)
+            categoryItems.splice(newOrder - 1, 0, itemData);
+        } else {
+            // Place at the end
+            categoryItems.push(itemData);
+        }
+
+        // Re-index all items in this category to be perfectly sequential (1, 2, 3...)
+        const itemsToUpdate = categoryItems.map((item, index) => ({
+            ...item,
+            order: index + 1,
+            updatedAt: new Date().toISOString()
+        }));
+
+        await bulkSaveMenuItems(itemsToUpdate);
+        showNotification('تم حفظ البيانات وترتيب القائمة بنجاح ✨');
         closeModal();
         await refreshData();
     } catch (error) {
@@ -937,6 +1106,7 @@ function editItem(id) {
 
     document.getElementById('item-desc-ar').value = item.description_ar || '';
     document.getElementById('item-show-home').checked = item.showOnHome || false;
+    updateOrderDropdown(item.category, item.order);
 
     // Load options
     if (item.options) {
@@ -1267,41 +1437,10 @@ function injectVariantDOM(type, name, price) {
     container.appendChild(label);
 }
 
-// Global Exports
-window.switchTab = switchTab;
-window.toggleSidebar = toggleSidebar;
-window.closeSidebar = closeSidebar;
-window.toggleNotifications = toggleNotifications;
-window.openModal = openModal;
-window.closeModal = closeModal;
-window.editItem = editItem;
-window.deleteItem = deleteItem;
-window.saveSettings = saveSettings;
-window.generateQRCode = generateQRCode;
-window.downloadQRCode = downloadQRCode;
-window.handleImageSelection = handleImageSelection;
-window.removeImage = removeImage;
-window.handleAddCategory = handleAddCategory;
-window.handleDeleteCategory = handleDeleteCategory;
-window.calculateDiscountPrice = calculateDiscountPrice;
-window.calculateDiscountPercentage = calculateDiscountPercentage;
-window.toggleAvailability = toggleAvailability;
-window.addTypeTag = addTypeTag;
-window.removeTypeTag = removeTypeTag;
-window.addCustomVariant = addCustomVariant;
-window.filterMenuItemsByCategory = filterMenuItemsByCategory;
-window.toggleFeedbackVisibility = (id, status) => {
-    updateFeedbackStatus(id, status).then(() => {
-        showNotification(status ? 'سيظهر في الرئيسية ✨' : 'تم الإخفاء من الرئيسية');
-        refreshData();
-    });
-};
-
 // Order Dropdown Logic
-window.toggleOrderDropdown = function (event, id) {
+function toggleOrderDropdown(event, id) {
     event.preventDefault();
     event.stopPropagation();
-    console.log("Toggling dropdown for:", id);
     const allDropdowns = document.querySelectorAll('.order-dropdown');
     allDropdowns.forEach(d => {
         if (d.id !== `dropdown-${id}`) d.classList.add('hidden');
@@ -1309,68 +1448,54 @@ window.toggleOrderDropdown = function (event, id) {
     const dropdown = document.getElementById(`dropdown-${id}`);
     if (dropdown) {
         dropdown.classList.toggle('hidden');
-        console.log("Dropdown state:", dropdown.classList.contains('hidden') ? 'hidden' : 'visible');
     }
-};
+}
 
-window.reorderCategory = async function (catId, newIndex) {
-    console.log("--- Reorder Start ---");
-    console.log("Target ID:", catId, "New Index:", newIndex);
-
-    // Get fresh copy from global state
+async function reorderCategory(catId, newIndex) {
     let cats = [...(window.samaka_categories || [])];
     const oldIndex = cats.findIndex(c => c.id === catId);
-
-    if (oldIndex === -1) {
-        console.error("Critical: Category not found in global state");
-        return;
-    }
-
-    if (oldIndex === newIndex) {
-        console.log("No change in position");
+    if (oldIndex === -1 || oldIndex === newIndex) {
         document.querySelectorAll('.order-dropdown').forEach(d => d.classList.add('hidden'));
         return;
     }
 
-    // Rearrange
     const [movedItem] = cats.splice(oldIndex, 1);
     cats.splice(newIndex, 0, movedItem);
-
-    console.log("New Order Array:", cats.map(c => c.name));
-
-    // Update Global State immediately
     window.samaka_categories = cats;
-
-    // FORCE UI RE-RENDER
     renderCategories(cats);
 
-    // Close dropdowns
     document.querySelectorAll('.order-dropdown').forEach(d => d.classList.add('hidden'));
     showNotification('جاري الحفظ... ⏳');
 
     try {
-        const updates = cats.map((cat, index) => {
-            return saveCategory({ id: cat.id, order: index });
-        });
-
+        const updates = cats.map((cat, index) => saveCategory({ id: cat.id, order: index }));
         await Promise.all(updates);
-        console.log("Firebase Update Success");
         showNotification('تم تحديث الترتيب بنجاح ✨');
-
-        // Final sync
         const freshCats = await getCategories();
         window.samaka_categories = freshCats;
         renderCategories(freshCats);
     } catch (e) {
-        console.error("Firebase Update Failed", e);
         showNotification('فشل الحفظ', 'error');
         refreshData();
     }
-};
+}
 
-// Close dropdowns on outside click
+// Close dropdowns and modals on outside click
 document.addEventListener('click', (e) => {
+    // 1. Close category order dropdowns
     if (!e.target.closest('.category-chip')) {
         document.querySelectorAll('.order-dropdown').forEach(d => d.classList.add('hidden'));
+    }
+
+    // 2. Close Item Modal when clicking background (the darkened area)
+    const itemModal = document.getElementById('item-modal');
+    if (e.target === itemModal || e.target.closest('.absolute.inset-0.bg-slate-950\\/80')) {
+        closeModal();
+    }
+
+    // 3. Close Confirmation Modal when clicking background
+    const confirmModal = document.getElementById('confirm-modal');
+    if (e.target === confirmModal) {
+        confirmModal.classList.add('hidden');
     }
 });

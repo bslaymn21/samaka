@@ -12,6 +12,7 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
     line-height: 1.6;
     font-family: 'Epilogue', sans-serif;
+    overflow-x: hidden;
 }
 
 html.dark body {
@@ -132,7 +133,7 @@ html.dark .refractive-border {
     --marquee-height: 400px;
     --marquee-item-width: 450px;
     --marquee-item-spacing: 2rem;
-    --marquee-duration: 30s;
+    --marquee-duration: 60s;
     
     width: 100%;
     height: var(--marquee-height);
@@ -190,7 +191,7 @@ html.dark .refractive-border {
     .marquee-container {
         --marquee-height: 320px;
         --marquee-item-width: 260px;
-        --marquee-duration: 20s;
+        --marquee-duration: 60s;
     }
 }
 
@@ -485,14 +486,29 @@ html[dir="rtl"] .cart-drawer {
     box-shadow: 0 4px 12px rgba(21, 192, 90, 0.3);
 }
 
+/* Smooth Horizontal Scroll Indicator */
+.flex.overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+}
+
+
 /* Floating Action Button (Mobile) */
 .mobile-cart-btn {
     position: fixed;
-    bottom: 90px; /* Moved up to clear the bottom navigation bar */
-    right: 24px;
+    bottom: 85px; 
+    right: 20px;
     z-index: 90;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+@media (max-width: 640px) {
+    .mobile-cart-btn button {
+        width: 56px;
+        height: 56px;
+    }
+}
+
 
 .rtl-mode .mobile-cart-btn {
     right: auto;
@@ -722,4 +738,22 @@ input[type=number] {
 
 .dark .option-label {
     color: #64748b;
+}
+
+/* Mobile Bottom Nav Polish */
+@media (max-width: 768px) {
+    nav.md\:hidden.fixed.bottom-0 {
+        height: 70px;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+    }
+    nav.md\:hidden.fixed.bottom-0 a {
+        padding-top: 8px;
+    }
+    nav.md\:hidden.fixed.bottom-0 .material-symbols-outlined {
+        font-size: 26px;
+    }
+    nav.md\:hidden.fixed.bottom-0 span[data-i18n] {
+        font-size: 9px;
+        margin-top: 2px;
+    }
 }

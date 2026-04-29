@@ -13,7 +13,8 @@ import {
     getDoc,
     setDoc,
     updateDoc,
-    deleteDoc
+    deleteDoc,
+    writeBatch
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // --- MENU ---
@@ -61,6 +62,24 @@ export async function deleteMenuItem(id) {
         throw error;
     }
 }
+/**
+ * Bulk update menu items (for reordering)
+ */
+export async function bulkSaveMenuItems(items) {
+    try {
+        const batch = writeBatch(db);
+        items.forEach(item => {
+            const docRef = doc(db, "menu", item.id);
+            const { id, ...data } = item;
+            batch.set(docRef, data, { merge: true });
+        });
+        await batch.commit();
+    } catch (error) {
+        console.error("Error in bulk update: ", error);
+        throw error;
+    }
+}
+
 // --- CATEGORIES ---
 
 /**
