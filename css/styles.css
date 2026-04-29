@@ -12,7 +12,14 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
     line-height: 1.6;
     font-family: 'Epilogue', sans-serif;
-    overflow-x: hidden;
+    overflow-x: clip;
+    position: relative;
+    width: 100%;
+}
+
+html {
+    overflow-x: clip;
+    scroll-behavior: smooth;
 }
 
 html.dark body {
@@ -791,18 +798,46 @@ input[type=number] {
 
 /* Mobile Bottom Nav Polish */
 @media (max-width: 768px) {
-    nav.md\:hidden.fixed.bottom-0 {
-        height: 80px;
+    nav.fixed.bottom-0 {
+        height: calc(70px + env(safe-area-inset-bottom));
         padding-bottom: env(safe-area-inset-bottom);
-        box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.08);
+        border-top: 1px solid rgba(0,0,0,0.05);
     }
-    nav.md\:hidden.fixed.bottom-0 a {
-        padding-top: 8px;
+    
+    .dark nav.fixed.bottom-0 {
+        border-top-color: rgba(255,255,255,0.05);
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.4);
     }
-    nav.md\:hidden.fixed.bottom-0 .material-symbols-outlined {
+
+    nav.fixed.bottom-0 a {
+        position: relative;
+        padding-top: 12px;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    nav.fixed.bottom-0 a.text-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 3px;
+        background: currentColor;
+        border-radius: 0 0 4px 4px;
+        box-shadow: 0 2px 10px rgba(38, 128, 255, 0.3);
+    }
+    
+    /* Remove the default border-t-2 from HTML as we use pseudo-element now */
+    nav.fixed.bottom-0 a {
+        border-top: none !important;
+    }
+}
+    nav.fixed.bottom-0 .material-symbols-outlined {
         font-size: 26px;
     }
-    nav.md\:hidden.fixed.bottom-0 span[data-i18n] {
+    nav.fixed.bottom-0 span[data-i18n] {
         font-size: 9px;
         margin-top: 2px;
     }

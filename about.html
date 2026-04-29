@@ -9,6 +9,11 @@
     <meta name="keywords" content="سمك الإسكندرية، سمك مشوي، مأكولات بحرية طازجة، مطعم سمكة، مأكولات متوسطية" />
     <title>سمكة | عنا</title>
 
+    <!-- Preconnect for Speed -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+
     <!-- Fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&amp;family=Work+Sans:wght@400;600&amp;family=Noto+Kufi+Arabic:wght@400;700&amp;family=Noto+Sans+Arabic:wght@400;700&amp;display=swap"
@@ -166,7 +171,7 @@
 
         <!-- Conversion Banner -->
         <section class="py-12 px-6">
-            <div class="conversion-banner shadow-2xl overflow-hidden relative">
+            <div class="conversion-banner shadow-none md:shadow-2xl overflow-hidden relative">
                 <div class="relative z-10">
                     <h2 class="text-4xl font-bold mb-4" data-i18n="menu_cta_title">تحب تاكل إيه النهارده؟</h2>
                     <p class="text-xl mb-10 opacity-90" data-i18n="menu_cta_desc">تقدر تختار كل اللي نفسك فيه من المنيو
@@ -339,7 +344,7 @@
             const createItemHtml = (item) => `
                 <div class="marquee-item group">
                     <img alt="${item.name_ar}" class="w-full h-full object-cover" 
-                         src="${item.images && item.images.length > 0 ? item.images[0] : item.image}" />
+                         src="${item.images && item.images.length > 0 ? item.images[0] : item.image}" loading="lazy" />
                     <span class="price-badge">${item.price} <span data-i18n="price_currency">EGP</span></span>
                     <button onclick="quickAdd('${item.id}')" class="quick-add-btn" data-i18n="btn_add_to_order">أضف للطلب</button>
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
@@ -525,7 +530,7 @@
 
     <!-- BottomNavBar (Mobile Only) -->
     <nav
-        class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center bg-white dark:bg-slate-900 px-2 pb-safe border-t border-slate-200 dark:border-slate-800 z-50 min-h-[4rem] h-auto">
+        class="md:hidden fixed bottom-0 inset-x-0 flex justify-center items-center bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-4 pb-safe border-t border-slate-200 dark:border-slate-800 z-50 h-20 shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
         <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
             href="index.html">
             <span class="material-symbols-outlined">restaurant_menu</span>
