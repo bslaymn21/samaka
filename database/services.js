@@ -25,7 +25,10 @@ import {
 export async function getMenuItems() {
     try {
         const querySnapshot = await getDocs(collection(db, "menu"));
-        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        return querySnapshot.docs.map(doc => {
+            const data = doc.data();
+            return { ...data, id: doc.id, internalId: data.id || null };
+        });
     } catch (error) {
         console.error("Error getting menu items: ", error);
         return []; // Fallback to empty
@@ -297,7 +300,10 @@ export async function getAllFeedback() {
     try {
         const q = query(collection(db, "feedback"), orderBy("createdAt", "desc"));
         const querySnapshot = await getDocs(q);
-        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        return querySnapshot.docs.map(doc => {
+            const data = doc.data();
+            return { ...data, id: doc.id };
+        });
     } catch (error) {
         console.error("Error getting feedback: ", error);
         return [];
@@ -343,7 +349,10 @@ export async function getOrders() {
     try {
         const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
         const querySnapshot = await getDocs(q);
-        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        return querySnapshot.docs.map(doc => {
+            const data = doc.data();
+            return { ...data, id: doc.id, internalId: data.id || null };
+        });
     } catch (error) {
         console.error("Error getting orders: ", error);
         return [];

@@ -390,7 +390,8 @@ async function renderOrders() {
         }
 
         tbody.innerHTML = logs.map(log => {
-            const idShort = (log.id || '0000').toString().slice(-4);
+            const displayId = log.internalId || log.id;
+            const idShort = (displayId || '0000').toString().slice(-6);
             const dateStr = log.timestamp ? new Date(log.timestamp).toLocaleString('ar-EG', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'numeric' }) : '';
             const itemsSummary = (log.items || []).map(i => `${i.quantity}x ${i.name}`).join('، ');
 
@@ -426,12 +427,16 @@ async function renderOrders() {
                     </div>
 
                     <!-- Actions -->
-                    <div class="flex justify-end items-center gap-2">
-                        <button onclick="printOrder('${log.id}')" class="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all shadow-sm" title="طباعة فاتورة">
-                            <span class="material-symbols-outlined text-sm md:text-base">print</span>
+                    <div class="flex justify-end items-center gap-3 pt-2 md:pt-0 border-t md:border-t-0 border-slate-50 dark:border-white/5 mt-2 md:mt-0">
+                        <button onclick="window.printOrder('${log.id}')" 
+                                class="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-3 md:p-2.5 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-[#0058bc] dark:text-blue-400 hover:bg-[#0058bc] hover:text-white transition-all shadow-sm group/btn">
+                            <span class="material-symbols-outlined text-xl">print</span>
+                            <span class="md:hidden text-[10px] font-black uppercase">طباعة</span>
                         </button>
-                        <button onclick="handleDeleteOrder('${log.id}')" class="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-all shadow-sm">
-                            <span class="material-symbols-outlined text-sm md:text-base">delete</span>
+                        <button onclick="window.handleDeleteOrder('${log.id}')" 
+                                class="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-3 md:p-2.5 rounded-xl bg-rose-50 dark:bg-rose-500/10 text-rose-500 dark:text-rose-400 hover:bg-rose-500 hover:text-white transition-all shadow-sm">
+                            <span class="material-symbols-outlined text-xl">delete</span>
+                            <span class="md:hidden text-[10px] font-black uppercase">حذف</span>
                         </button>
                     </div>
                 </div>
@@ -448,6 +453,10 @@ async function printOrder(id) {
         if (!log) return;
 
         const printWindow = window.open('', '_blank');
+        if (!printWindow) {
+            showNotification('يرجى السماح بالنوافذ المنبثقة (Pop-ups) لطباعة الفاتورة', 'error');
+            return;
+        }
         const itemsHtml = (log.items || []).map(i => `
             <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #eee;">
                 <span>${i.name} (x${i.quantity})</span>
@@ -524,15 +533,29 @@ async function printOrder(id) {
 }
 
 window.printOrder = printOrder;
+window.handleDeleteOrder = handleDeleteOrder;
 
 async function handleDeleteOrder(id) {
-    // We can keep the confirm for destructive actions, or use a custom modal later.
-    // For now, let's keep native confirm but use custom toast for result.
-    if (!confirm('هل أنت متأكد من الحفظ؟')) return;
-    if (await deleteOrder(id)) {
-        showNotification('تم حذف الطلب بنجاح');
-        await renderOrders();
-    }
+    console.log("handleDeleteOrder called for ID:", id);
+    showConfirm(
+        'حذف الطلب؟',
+        'هل أنت متأكد من حذف هذا الطلب نهائياً؟ لا يمكن التراجع عن هذا الفعل.',
+        async () => {
+            console.log("onConfirm triggered for ID:", id);
+            try {
+                const success = await deleteOrder(id);
+                if (success) {
+                    showNotification('تم حذف الطلب بنجاح');
+                    await renderOrders();
+                } else {
+                    showNotification('فشل الحذف من قاعدة البيانات', 'error');
+                }
+            } catch (err) {
+                console.error("Delete Error:", err);
+                showNotification('حدث خطأ تقني أثناء الحذف', 'error');
+            }
+        }
+    );
 }
 
 // Custom Notification System
@@ -572,12 +595,17 @@ function updateLogStatus(type, id, newStatus) {
 }
 
 function deleteLog(type, id) {
-    if (!confirm('هل أنت متأكد من الحذف؟')) return;
-    const key = 'matamkom_orders_logs';
-    let logs = JSON.parse(localStorage.getItem(key) || '[]');
-    logs = logs.filter(l => l.id != id);
-    localStorage.setItem(key, JSON.stringify(logs));
-    window.location.reload();
+    showConfirm(
+        'حذف السجل؟',
+        'هل أنت متأكد من الحذف؟',
+        () => {
+            const key = 'matamkom_orders_logs';
+            let logs = JSON.parse(localStorage.getItem(key) || '[]');
+            logs = logs.filter(l => l.id != id);
+            localStorage.setItem(key, JSON.stringify(logs));
+            window.location.reload();
+        }
+    );
 }
 
 // Render Menu Cards (Modern Grid)
@@ -1296,9 +1324,19 @@ function showConfirm(title, message, onConfirm) {
     const closeModal = () => modal.classList.add('hidden');
 
     document.getElementById('confirm-cancel').onclick = closeModal;
-    document.getElementById('confirm-proceed').onclick = () => {
-        onConfirm();
-        closeModal();
+    document.getElementById('confirm-proceed').onclick = async () => {
+        const btn = document.getElementById('confirm-proceed');
+        const originalText = btn.innerText;
+        btn.innerText = 'جاري...';
+        btn.disabled = true;
+        
+        try {
+            await onConfirm();
+        } finally {
+            btn.innerText = originalText;
+            btn.disabled = false;
+            closeModal();
+        }
     };
 }
 
