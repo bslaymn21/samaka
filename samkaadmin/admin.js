@@ -23,7 +23,7 @@ import { uploadToCloudinary } from '../js/cloudinary.js';
 // AUTH PROTECTION (Custom Firestore Session)
 const adminSession = JSON.parse(localStorage.getItem('admin_session') || sessionStorage.getItem('admin_session') || 'null');
 if (!adminSession) {
-    window.location.href = 'index.html';
+    window.location.href = '/samkaadmin/index.html';
 }
 
 // Global Exports (Defined at top to be available for HTML onclick handlers immediately)
@@ -37,7 +37,7 @@ window.saveSettings = saveSettings;
 window.logout = () => {
     localStorage.removeItem('admin_session');
     sessionStorage.removeItem('admin_session');
-    window.location.href = 'index.html';
+    window.location.href = '/samkaadmin/index.html';
 };
 window.editItem = editItem;
 window.deleteItem = deleteItem;
