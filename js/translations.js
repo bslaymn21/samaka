@@ -212,7 +212,6 @@ var translations = {
         nav_about: "عنا",
         nav_menu: "المنيو",
         nav_contact: "اتصل بنا",
-        hero_tagline: "صدينا اليومي الطازج",
         lang_modal_title: "مرحباً بكم في سمكة",
         lang_modal_desc: "يرجى اختيار لغتك المفضلة للمتابعة",
         btn_arabic: "العربية",

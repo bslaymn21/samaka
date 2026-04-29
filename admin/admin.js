@@ -78,12 +78,14 @@ async function applyWatermark(file) {
 
                 ctx.drawImage(img, 0, 0);
 
-                // Subtle Watermark
+                // Subtle but visible Watermark
                 const fontSize = Math.max(20, img.width * 0.035);
                 ctx.font = `bold ${fontSize}px 'Epilogue', sans-serif`;
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
-                ctx.shadowBlur = 10;
+                
+                // Shadow for visibility on white backgrounds
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+                ctx.shadowBlur = 8;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
 
                 // Bottom Left as requested ("علي شمال الصوره")
                 ctx.fillText('SAMAKA', 30, img.height - 30);
@@ -129,8 +131,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     localStorage.setItem('preferred_language', 'ar');
     if (typeof applyLanguage === 'function') applyLanguage('ar');
 
-    // Auto-refresh stats every 30 seconds
-    setInterval(updateStats, 30000);
+    // Auto-refresh stats every 5 minutes (Optimized)
+    setInterval(updateStats, 300000);
 });
 
 async function refreshData() {
