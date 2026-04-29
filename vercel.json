@@ -1,0 +1,21 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/admin",
+      "destination": "/samkaadmin/index.html"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/samkaadmin/dashboard.html"
+    },
+    {
+      "source": "/samkaadmin",
+      "destination": "/samkaadmin/index.html"
+    },
+    {
+      "source": "/favicon.ico",
+      "destination": "/assets/only logo.png"
+    }
+  ]
+}
