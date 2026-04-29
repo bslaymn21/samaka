@@ -518,7 +518,7 @@ html[dir="rtl"] .cart-drawer {
 /* Floating Action Button (Mobile) */
 .mobile-cart-btn {
     position: fixed;
-    bottom: 85px; 
+    bottom: calc(env(safe-area-inset-bottom) + 140px); 
     right: 20px;
     z-index: 90;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -792,7 +792,8 @@ input[type=number] {
 /* Mobile Bottom Nav Polish */
 @media (max-width: 768px) {
     nav.md\:hidden.fixed.bottom-0 {
-        height: 70px;
+        height: 80px;
+        padding-bottom: env(safe-area-inset-bottom);
         box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
     }
     nav.md\:hidden.fixed.bottom-0 a {
