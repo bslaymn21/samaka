@@ -81,7 +81,7 @@ async function applyWatermark(file) {
                 // Subtle but visible Watermark
                 const fontSize = Math.max(20, img.width * 0.035);
                 ctx.font = `bold ${fontSize}px 'Epilogue', sans-serif`;
-                
+
                 // Shadow for visibility on white backgrounds
                 ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
                 ctx.shadowBlur = 8;
@@ -234,6 +234,10 @@ function switchTab(tabName) {
         setTimeout(initChart, 300);
     }
     if (tabName === 'qrcode') {
+        if (typeof generateQRCode === 'function') generateQRCode();
+    }
+    // Also generate QR if on mobile and opening settings
+    if (tabName === 'settings' && window.innerWidth < 1024) {
         if (typeof generateQRCode === 'function') generateQRCode();
     }
 
@@ -797,8 +801,12 @@ async function saveSettings(e) {
 
 function generateQRCode() {
     const container = document.getElementById('qrcode-container');
-    if (!container) return;
-    container.innerHTML = "";
+    const mobileContainer = document.getElementById('qrcode-container-mobile');
+    
+    if (!container && !mobileContainer) return;
+    
+    if (container) container.innerHTML = "";
+    if (mobileContainer) mobileContainer.innerHTML = "";
 
     const menuUrl = window.location.origin + "/index.html?ref=qr";
 
@@ -880,8 +888,19 @@ function generateQRCode() {
             const img = document.createElement('img');
             img.src = finalCanvas.toDataURL("image/png");
             img.style.width = "100%";
-            container.appendChild(img);
-            container.dataset.finalQr = img.src;
+            
+            if (container) {
+                const imgDesktop = img.cloneNode(true);
+                container.innerHTML = '';
+                container.appendChild(imgDesktop);
+                container.dataset.finalQr = imgDesktop.src;
+            }
+            if (mobileContainer) {
+                const imgMobile = img.cloneNode(true);
+                mobileContainer.innerHTML = '';
+                mobileContainer.appendChild(imgMobile);
+                mobileContainer.dataset.finalQr = imgMobile.src;
+            }
         };
     }, 100);
 }
@@ -913,8 +932,11 @@ function drawRoundedRect(ctx, x, y, width, height, radius) {
     ctx.fill();
 }
 
-function downloadQRCode() {
-    const container = document.getElementById('qrcode-container');
+function downloadQRCode(type = 'desktop') {
+    const id = type === 'mobile' ? 'qrcode-container-mobile' : 'qrcode-container';
+    const container = document.getElementById(id);
+    if (!container) return;
+    
     const finalData = container.dataset.finalQr;
     if (!finalData) return;
 
@@ -1329,7 +1351,7 @@ function showConfirm(title, message, onConfirm) {
         const originalText = btn.innerText;
         btn.innerText = 'جاري...';
         btn.disabled = true;
-        
+
         try {
             await onConfirm();
         } finally {

@@ -6,6 +6,8 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>إدارة سمكة | لوحة التحكم الذكية</title>
     <link rel="icon" type="image/png" href="../assets/only logo.png">
+    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#0058bc">
 
     <link
         href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&amp;family=Work+Sans:wght@400;500;600&amp;family=Noto+Kufi+Arabic:wght@400;600;700;900&amp;display=swap"
@@ -258,7 +260,7 @@
                 </button>
 
                 <button onclick="switchTab('qrcode')" id="tab-qrcode"
-                    class="sidebar-item w-full flex items-center gap-3.5 px-5 py-3 rounded-xl transition-all group">
+                    class="sidebar-item w-full hidden lg:flex items-center gap-3.5 px-5 py-3 rounded-xl transition-all group">
                     <span class="material-symbols-outlined text-[22px]">qr_code_2</span>
                     <span class="font-bold text-sm">كود QR</span>
                 </button>
@@ -664,6 +666,24 @@
                                                 <input type="hidden" id="setting-hours_ar">
                                                 <input type="hidden" id="setting-hours_en">
                                             </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- QR Code for Mobile (Above Password) -->
+                                    <div class="lg:hidden space-y-8 pb-8 border-b border-slate-100 dark:border-white/5">
+                                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] border-r-4 border-emerald-500 pr-4">
+                                            كود QR المنيو
+                                        </h3>
+                                        <div class="flex flex-col items-center space-y-6">
+                                            <div class="p-4 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border-4 border-slate-50 dark:border-slate-800/50 flex items-center justify-center">
+                                                <div id="qrcode-container-mobile" class="bg-white p-2 rounded-xl w-48 h-48 flex items-center justify-center overflow-hidden">
+                                                    <!-- QR Image will be injected here -->
+                                                </div>
+                                            </div>
+                                            <button type="button" onclick="downloadQRCode('mobile')"
+                                                class="w-full py-4 bg-secondary text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all text-sm">
+                                                <span class="material-symbols-outlined text-lg">download</span> تحميل الكود
+                                            </button>
                                         </div>
                                     </div>
 
@@ -1088,6 +1108,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="./admin.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('../sw.js')
+                    .then(reg => console.log('SW Registered'))
+                    .catch(err => console.log('SW Registration Failed', err));
+            });
+        }
+    </script>
 </body>
 
 </html>
