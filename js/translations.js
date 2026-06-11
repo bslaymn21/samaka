@@ -203,7 +203,32 @@ var translations = {
         thanks_desc: "Your order has been sent to WhatsApp. Would you like to leave us a rating or comment?",
         feedback_placeholder: "Tell us about your experience...",
         btn_submit_feedback: "Submit Feedback",
-        btn_rate_star: "Rate Us"
+        btn_rate_star: "Rate Us",
+
+        // Offers Page
+        offer_title: "Special Offer",
+        offer_subtitle: "Get the best deal on our signature dishes!",
+        offer_discount: "Discount",
+        offer_saved: "You Saved",
+        offer_before: "Before Discount",
+        offer_after: "After Discount",
+        offer_people: "Number of People",
+        offer_people_placeholder: "e.g. 4",
+        offer_ended: "Offer Ended",
+        offer_ended_desc: "This offer is no longer available. Check our menu for current deals!",
+        offer_back_menu: "Back to Menu",
+        offer_cart_title: "Your Offer Order",
+        offer_cart_empty: "Select items from the offer below",
+        offer_total: "Total",
+        offer_add: "Add",
+        offer_remove: "Remove",
+        offer_qty: "Qty",
+        offer_no_items: "No items in this category",
+        offer_load_error: "Could not load offer. Please try again later.",
+        offer_btn_send: "Send Order via WhatsApp",
+        offer_order_header: "Offer Order",
+        offer_customer_info: "Customer Info",
+        offer_summary: "Order Summary"
     },
     ar: {
         // المشترك والتنقل
@@ -407,6 +432,31 @@ var translations = {
         thanks_desc: "تم إرسال طلبك عبر واتساب. هل تود إضافة تقييم أو تعليق لتحسين خدمتنا؟",
         feedback_placeholder: "اكتب تعليقك هنا...",
         btn_submit_feedback: "إرسال التعليق",
-        btn_rate_star: "تقييم"
+        btn_rate_star: "تقييم",
+
+        // Offers Page
+        offer_title: "عرض الجمعة",
+        offer_subtitle: "احصل على أفضل العروض على أطباقنا المميزة!",
+        offer_discount: "خصم",
+        offer_saved: "وفّرت",
+        offer_before: "قبل الخصم",
+        offer_after: "بعد الخصم",
+        offer_people: "عدد الأفراد",
+        offer_people_placeholder: "مثال: 4",
+        offer_ended: "العرض منتهي",
+        offer_ended_desc: "هذا العرض لم يعد متاحاً. تصفح المنيو لترى أحدث العروض!",
+        offer_back_menu: "العودة للمنيو",
+        offer_cart_title: "طلب العرض",
+        offer_cart_empty: "اختر أصناف من العرض أدناه",
+        offer_total: "الإجمالي",
+        offer_add: "إضافة",
+        offer_remove: "إزالة",
+        offer_qty: "الكمية",
+        offer_no_items: "لا توجد أصناف في هذا القسم",
+        offer_load_error: "تعذر تحميل العرض. حاول مرة أخرى لاحقاً.",
+        offer_btn_send: "إرسال الطلب عبر واتساب",
+        offer_order_header: "طلب عرض الجمعة",
+        offer_customer_info: "بيانات العميل",
+        offer_summary: "ملخص الطلب"
     }
 };

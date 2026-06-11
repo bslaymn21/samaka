@@ -14,6 +14,10 @@
       "destination": "/samkaadmin/index.html"
     },
     {
+      "source": "/offers",
+      "destination": "/offers.html"
+    },
+    {
       "source": "/favicon.ico",
       "destination": "/assets/only logo.png"
     }

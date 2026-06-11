@@ -16,7 +16,11 @@ import {
     saveCategory,
     deleteCategory,
     updateAdminPassword,
-    bulkSaveMenuItems
+    bulkSaveMenuItems,
+    getActiveOffer,
+    saveOffer,
+    toggleOfferStatus,
+    getAllOffers
 } from '../database/services.js';
 import { uploadToCloudinary } from '../js/cloudinary.js';
 
@@ -31,6 +35,8 @@ window.switchTab = switchTab;
 window.openModal = openModal;
 window.closeModal = closeModal;
 window.toggleSidebar = toggleSidebar;
+window.handleToggleOffer = handleToggleOffer;
+window.selectAllOfferItems = selectAllOfferItems;
 window.closeSidebar = closeSidebar;
 window.toggleNotifications = toggleNotifications;
 window.saveSettings = saveSettings;
@@ -57,6 +63,8 @@ window.filterMenuItemsByCategory = filterMenuItemsByCategory;
 window.toggleFeedbackVisibility = toggleFeedbackVisibility;
 window.reorderCategory = reorderCategory;
 window.toggleOrderDropdown = toggleOrderDropdown;
+window.handleToggleOffer = handleToggleOffer;
+window.loadOfferForm = loadOfferForm;
 
 let currentData = [];
 let categories = [];
@@ -205,7 +213,7 @@ function switchTab(tabName) {
     }
 
     // UI: Content Sections
-    const tabs = ['dashboard', 'menu', 'orders', 'settings', 'qrcode'];
+    const tabs = ['dashboard', 'menu', 'orders', 'offers', 'settings', 'qrcode'];
     tabs.forEach(t => {
         const el = document.getElementById(`content-${t}`);
         if (el) el.classList.add('hidden');
@@ -221,6 +229,7 @@ function switchTab(tabName) {
         dashboard: "لوحة التحكم الرئيسية",
         orders: "إدارة الطلبات",
         menu: "قائمة الطعام",
+        offers: "إدارة العروض",
         qrcode: "رمز QR الذكي",
         settings: "إعدادات المصنع"
     };
@@ -232,6 +241,9 @@ function switchTab(tabName) {
     if (tabName === 'dashboard') {
         updateStats();
         setTimeout(initChart, 300);
+    }
+    if (tabName === 'offers') {
+        loadOfferForm();
     }
     if (tabName === 'qrcode') {
         if (typeof generateQRCode === 'function') generateQRCode();
@@ -1546,6 +1558,162 @@ async function reorderCategory(catId, newIndex) {
     } catch (e) {
         showNotification('فشل الحفظ', 'error');
         refreshData();
+    }
+}
+
+// --- OFFER MANAGEMENT ---
+
+let currentOfferId = null;
+
+async function loadOfferForm() {
+    const nameInput = document.getElementById('offer-name');
+    const discountInput = document.getElementById('offer-discount');
+    const toggle = document.getElementById('offer-toggle');
+    const statusText = document.getElementById('offer-status-text');
+    const container = document.getElementById('offer-items-container');
+    if (!container) return;
+
+    // Load menu items grouped by category
+    const items = await getMenuItems();
+    const cats = await getCategories();
+
+    if (items.length === 0) {
+        container.innerHTML = '<div class="text-center py-10 text-slate-400 font-bold">لا توجد أصناف في المنيو</div>';
+        return;
+    }
+
+    // Load existing offer
+    const offer = await getActiveOffer();
+    const selectedIds = offer ? (offer.items || []) : [];
+
+    if (offer) {
+        currentOfferId = offer.id;
+        nameInput.value = offer.name || '';
+        discountInput.value = offer.discountPercentage || '';
+        toggle.checked = offer.isActive === true;
+        statusText.textContent = offer.isActive ? 'مفعل' : 'غير مفعل';
+    } else {
+        currentOfferId = null;
+        nameInput.value = '';
+        discountInput.value = '';
+        toggle.checked = false;
+        statusText.textContent = 'غير مفعل';
+    }
+
+    // Group items by category
+    const grouped = {};
+    cats.forEach(cat => {
+        grouped[cat.name] = [];
+    });
+    items.forEach(item => {
+        const catName = item.category || 'عام';
+        if (!grouped[catName]) grouped[catName] = [];
+        grouped[catName].push(item);
+    });
+
+    container.innerHTML = Object.entries(grouped).map(([catName, catItems]) => {
+        if (catItems.length === 0) return '';
+        return `
+            <div class="border border-slate-100 dark:border-white/10 rounded-2xl overflow-hidden">
+                <div class="bg-slate-50 dark:bg-white/5 px-5 py-3 border-b border-slate-100 dark:border-white/5">
+                    <h4 class="font-bold text-sm text-slate-700 dark:text-slate-300">${catName}</h4>
+                </div>
+                <div class="divide-y divide-slate-50 dark:divide-white/5">
+                    ${catItems.map(item => {
+                        const checked = selectedIds.includes(item.id) ? 'checked' : '';
+                        return `
+                            <label class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer transition-colors">
+                                <input type="checkbox" value="${item.id}" ${checked} class="offer-item-checkbox w-5 h-5 rounded-lg text-amber-500 focus:ring-amber-500 border-slate-300 dark:border-white/10 cursor-pointer">
+                                <div class="flex-grow flex justify-between items-center">
+                                    <span class="text-sm font-bold text-slate-700 dark:text-slate-300">${item.name_ar || item.name}</span>
+                                    <span class="text-xs font-black text-slate-400">${item.price} ج.م</span>
+                                </div>
+                            </label>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    // Attach form submit handler
+    const form = document.getElementById('offers-form');
+    form.onsubmit = handleOfferFormSubmit;
+}
+
+async function handleOfferFormSubmit(e) {
+    e.preventDefault();
+    const name = document.getElementById('offer-name').value.trim();
+    const discount = parseFloat(document.getElementById('offer-discount').value);
+    const checkboxes = document.querySelectorAll('.offer-item-checkbox:checked');
+    const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+
+    if (!name) {
+        showNotification('يرجى إدخال اسم العرض', 'error');
+        return;
+    }
+    if (!discount || discount < 1 || discount > 100) {
+        showNotification('يرجى إدخال نسبة خصم صحيحة (1-100)', 'error');
+        return;
+    }
+    if (selectedIds.length === 0) {
+        showNotification('يرجى اختيار صنف واحد على الأقل', 'error');
+        return;
+    }
+
+    const offerData = {
+        name,
+        discountPercentage: discount,
+        items: selectedIds,
+        isActive: document.getElementById('offer-toggle').checked
+    };
+
+    if (currentOfferId) offerData.id = currentOfferId;
+
+    try {
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="animate-spin material-symbols-outlined">sync</span> جاري الحفظ...';
+
+        const savedId = await saveOffer(offerData);
+        showNotification('تم حفظ العرض بنجاح ✨');
+        currentOfferId = savedId;
+        document.getElementById('offer-status-text').textContent =
+            document.getElementById('offer-toggle').checked ? 'مفعل' : 'غير مفعل';
+    } catch (error) {
+        console.error(error);
+        showNotification('حدث خطأ أثناء حفظ العرض ❌', 'error');
+    } finally {
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-symbols-outlined">save</span> حفظ العرض';
+    }
+}
+
+function selectAllOfferItems() {
+    const checkboxes = document.querySelectorAll('.offer-item-checkbox');
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+    checkboxes.forEach(cb => cb.checked = !allChecked);
+}
+
+async function handleToggleOffer() {
+    const toggle = document.getElementById('offer-toggle');
+    const statusText = document.getElementById('offer-status-text');
+
+    if (!currentOfferId) {
+        showNotification('يرجى حفظ العرض أولاً قبل تفعيله', 'error');
+        toggle.checked = false;
+        return;
+    }
+
+    const newStatus = toggle.checked;
+    const success = await toggleOfferStatus(currentOfferId, newStatus);
+    if (success) {
+        statusText.textContent = newStatus ? 'مفعل' : 'غير مفعل';
+        showNotification(newStatus ? 'تم تفعيل العرض ✅' : 'تم إيقاف العرض ⏸️');
+    } else {
+        toggle.checked = !newStatus;
+        showNotification('فشل تغيير حالة العرض ❌', 'error');
     }
 }
 

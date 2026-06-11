@@ -9,6 +9,7 @@ import {
     getDocs,
     query,
     orderBy,
+    where,
     doc,
     getDoc,
     setDoc,
@@ -427,5 +428,71 @@ export async function initAdminAccount() {
         if (!docSnap.exists()) {
             await setDoc(docRef, { username: "admin", password: "admin123" });
         }
-    } catch (e) {}
+    } catch (e) { }
+}
+
+// --- OFFERS ---
+
+export async function getActiveOffer() {
+    try {
+        const q = query(collection(db, "offers"), where("isActive", "==", true));
+        const querySnapshot = await getDocs(q);
+        if (querySnapshot.empty) return null;
+        const doc = querySnapshot.docs[0];
+        return { ...doc.data(), id: doc.id };
+    } catch (error) {
+        console.error("Error getting active offer:", error);
+        return null;
+    }
+}
+
+export async function saveOffer(offerData) {
+    try {
+        // Deactivate all existing offers first
+        const allSnap = await getDocs(collection(db, "offers"));
+        const batch = writeBatch(db);
+        allSnap.docs.forEach(docSnap => {
+            batch.update(docSnap.ref, { isActive: false });
+        });
+        await batch.commit();
+
+        // Save the new offer
+        if (offerData.id) {
+            const docRef = doc(db, "offers", offerData.id);
+            await setDoc(docRef, { ...offerData, updatedAt: new Date().toISOString() }, { merge: true });
+            return offerData.id;
+        } else {
+            const docRef = await addDoc(collection(db, "offers"), {
+                ...offerData,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            });
+            return docRef.id;
+        }
+    } catch (error) {
+        console.error("Error saving offer:", error);
+        throw error;
+    }
+}
+
+export async function toggleOfferStatus(offerId, isActive) {
+    try {
+        const docRef = doc(db, "offers", offerId);
+        await updateDoc(docRef, { isActive, updatedAt: new Date().toISOString() });
+        return true;
+    } catch (error) {
+        console.error("Error toggling offer status:", error);
+        return false;
+    }
+}
+
+export async function getAllOffers() {
+    try {
+        const q = query(collection(db, "offers"), orderBy("createdAt", "desc"));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+    } catch (error) {
+        console.error("Error getting offers:", error);
+        return [];
+    }
 }

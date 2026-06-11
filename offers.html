@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html class="light" lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="description" content="عروض سمكة المميزة - احصل على أفضل الخصومات على أطباقنا الطازجة" />
+    <meta name="keywords" content="عروض سمكة, خصم, مأكولات بحرية, عرض الجمعة" />
+    <title>سمكة | العروض</title>
+    <link rel="icon" type="image/png" href="./assets/only logo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&amp;family=Work+Sans:wght@400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="./js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="./css/styles.css">
+
+    <script src="./js/translations.js"></script>
+    <script src="./js/language-selector.js"></script>
+    <script src="./js/theme-manager.js"></script>
+    <script src="./js/preloader.js"></script>
+    <script src="./js/data.js"></script>
+
+    <style>
+        .offer-hero-gradient {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+        }
+        html.dark .offer-hero-gradient {
+            background: linear-gradient(135deg, #92400e 0%, #78350f 50%, #451a03 100%);
+        }
+        .offer-discount-badge {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .offers-cart-btn {
+            position: fixed;
+            bottom: calc(env(safe-area-inset-bottom) + 140px);
+            left: 24px;
+            z-index: 90;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .offer-ended-overlay {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .offer-item-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .offer-item-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+        }
+        html.dark .offer-item-card:hover {
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        }
+        .offer-qty-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+        .offer-qty-btn:active {
+            transform: scale(0.9);
+        }
+        .saved-amount {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+    </style>
+</head>
+
+<body class="font-body-md text-on-surface rtl-mode">
+    <div id="site-preloader" class="preloader-container">
+        <div class="absolute inset-0 z-0 opacity-40 pointer-events-none preloader-gradient"></div>
+        <div class="relative flex flex-col items-center">
+            <div class="mb-lg">
+                <img src="./assets/only logo.png" alt="Samaka Logo"
+                    class="preloader-logo relative z-10 logo-primary-filter animate-swim animate-glow" loading="eager">
+            </div>
+        </div>
+        <div class="w-full text-center space-y-md">
+            <div class="hidden" data-i18n="loader_title">SAMAKA</div>
+            <p class="font-body-md text-sm text-slate-500 italic opacity-60" data-i18n="loader_desc"></p>
+            <div class="preloader-progress mx-auto">
+                <div class="preloader-progress-bar animate-loading"></div>
+            </div>
+        </div>
+    </div>
+
+    <header
+        class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-white/10 docked full-width top-0 sticky z-50 transition-colors h-16 md:h-20">
+        <div class="flex justify-between items-center w-full px-6 py-4 mx-auto max-w-container-max relative h-full">
+            <a href="index.html" class="flex items-center absolute start-6 top-1/2 -translate-y-1/2 z-10">
+                <img src="./assets/only logo.png" alt="Samaka" class="h-14 md:h-20 w-auto object-contain">
+            </a>
+            <div class="flex-1"></div>
+            <nav class="hidden md:flex gap-md items-center">
+                <a class="text-slate-500 dark:text-abyss-on-variant font-label-caps hover:text-secondary dark:hover:text-abyss-secondary transition-colors duration-200"
+                    href="index.html" data-i18n="nav_home">المنيو</a>
+                <a class="text-slate-500 dark:text-abyss-on-variant font-label-caps hover:text-secondary dark:hover:text-abyss-secondary transition-colors duration-200"
+                    href="about.html" data-i18n="nav_about">عنا</a>
+                <a class="text-primary dark:text-abyss-primary font-bold font-label-caps hover:text-secondary dark:hover:text-abyss-secondary transition-colors duration-200"
+                    href="offers.html" data-i18n="offer_title">العروض</a>
+                <a class="text-slate-500 dark:text-abyss-on-variant font-label-caps hover:text-secondary dark:hover:text-abyss-secondary transition-colors duration-200"
+                    href="contact.html" data-i18n="nav_contact">اتصل بنا</a>
+            </nav>
+            <div class="flex-1 flex justify-end items-center gap-3">
+                <button onclick="toggleTheme()"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors flex items-center justify-center text-slate-500 dark:text-abyss-on-variant"
+                    title="Toggle Theme">
+                    <span class="material-symbols-outlined theme-icon">dark_mode</span>
+                </button>
+                <button onclick="toggleLanguage()"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors flex items-center justify-center text-slate-500 dark:text-abyss-on-variant"
+                    title="Change Language">
+                    <span class="material-symbols-outlined">translate</span>
+                </button>
+                <button onclick="toggleOffersCart()"
+                    class="hidden md:flex relative p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors items-center justify-center text-amber-500 dark:text-amber-400">
+                    <span class="material-symbols-outlined">local_offer</span>
+                    <span id="offer-cart-badge"
+                        class="absolute -top-1 -left-1 bg-secondary text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 hidden">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-xl pb-32 pb-safe-xl">
+        <!-- Hero Section -->
+        <div id="offer-hero"
+            class="relative overflow-hidden mb-12 rounded-none md:rounded-3xl -mx-6 md:mx-0 min-h-[30vh] md:min-h-[350px] flex items-center justify-center px-8 md:px-16 offer-hero-gradient shadow-lg">
+            <div class="absolute inset-0 bg-black/10"></div>
+            <div class="relative z-10 w-full max-w-3xl text-center">
+                <div class="inline-block offer-discount-badge rounded-full px-6 py-2 mb-6">
+                    <span class="text-white font-black text-sm md:text-lg" id="offer-discount-label">25% خصم</span>
+                </div>
+                <h1 id="offer-hero-title" class="font-h1 text-3xl md:text-5xl text-white mb-4 drop-shadow-2xl font-black">
+                    عرض الجمعة
+                </h1>
+                <p id="offer-hero-desc" class="text-white/80 text-base md:text-lg font-bold" data-i18n="offer_subtitle">
+                    احصل على أفضل العروض على أطباقنا المميزة!
+                </p>
+            </div>
+        </div>
+
+        <!-- Offer Ended Overlay (shown when offer is inactive) -->
+        <div id="offer-ended-overlay" class="hidden fixed inset-0 z-50 offer-ended-overlay bg-white/80 dark:bg-slate-900/80 flex flex-col items-center justify-center p-8 text-center">
+            <div class="w-24 h-24 bg-amber-100 dark:bg-amber-500/10 rounded-full flex items-center justify-center mb-8">
+                <span class="material-symbols-outlined text-5xl text-amber-500">local_offer</span>
+            </div>
+            <h2 class="text-3xl md:text-4xl font-black text-primary dark:text-white mb-4" data-i18n="offer_ended">العرض منتهي</h2>
+            <p class="text-slate-500 dark:text-slate-400 text-lg max-w-md mb-10" data-i18n="offer_ended_desc">هذا العرض لم يعد متاحاً. تصفح المنيو لترى أحدث العروض!</p>
+            <a href="index.html"
+                class="inline-flex items-center gap-3 bg-primary hover:bg-secondary text-white px-10 py-5 rounded-2xl font-bold text-lg transition-all shadow-xl active:scale-95"
+                data-i18n="offer_back_menu">
+                <span class="material-symbols-outlined">restaurant_menu</span>
+                العودة للمنيو
+            </a>
+        </div>
+
+        <!-- Loading State -->
+        <div id="offer-loading" class="text-center py-20">
+            <div class="w-12 h-12 border-4 border-amber-200 border-t-amber-500 rounded-full animate-spin mx-auto mb-6"></div>
+            <p class="text-slate-400 font-bold text-sm" data-i18n="loader_desc">جاري تحميل العرض...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="offer-error" class="hidden text-center py-20">
+            <span class="material-symbols-outlined text-6xl text-slate-300 mb-4">error</span>
+            <p class="text-slate-400 font-bold" data-i18n="offer_load_error">تعذر تحميل العرض. حاول مرة أخرى لاحقاً.</p>
+        </div>
+
+        <!-- Offer Items Container -->
+        <div id="offer-items-wrapper" class="hidden space-y-16">
+            <!-- Categories & Items injected here -->
+        </div>
+    </main>
+
+    <!-- Offers Cart Drawer -->
+    <div id="offer-cart-overlay" onclick="toggleOffersCart()"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] cart-overlay"></div>
+    <div id="offer-cart-drawer" class="cart-drawer flex flex-col">
+        <div class="p-6 border-b border-slate-100 dark:border-white/10 flex justify-between items-center bg-amber-50 dark:bg-amber-500/5">
+            <h2 class="text-2xl font-bold text-amber-600 dark:text-amber-400 flex items-center gap-3">
+                <span class="material-symbols-outlined">local_offer</span>
+                <span data-i18n="offer_cart_title">طلب العرض</span>
+            </h2>
+            <button onclick="toggleOffersCart()" class="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div id="offer-cart-items" class="flex-grow overflow-y-auto p-6 space-y-4">
+            <!-- Cart items here -->
+        </div>
+        <div id="offer-cart-footer" class="p-6 pb-safe border-t border-slate-100 dark:border-white/10 bg-amber-50/50 dark:bg-black/20">
+            <!-- Totals -->
+            <div class="space-y-3 mb-4">
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-slate-500 font-bold" data-i18n="offer_before">قبل الخصم</span>
+                    <span id="offer-total-before" class="text-slate-400 line-through font-bold">0 ج.م</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-500 font-bold" data-i18n="offer_discount">الخصم</span>
+                    <span id="offer-discount-amount" class="text-red-500 font-bold">-0 ج.م</span>
+                </div>
+                <div class="saved-amount rounded-2xl px-4 py-3 flex justify-between items-center">
+                    <span class="text-white font-bold text-sm" data-i18n="offer_saved">وفّرت</span>
+                    <span id="offer-saved-amount" class="text-white font-black text-lg">0 ج.م</span>
+                </div>
+                <div class="flex justify-between items-center text-lg border-t border-slate-200 dark:border-white/10 pt-3 mt-3">
+                    <span class="font-black text-slate-800 dark:text-white" data-i18n="offer_after">بعد الخصم</span>
+                    <span id="offer-total-after" class="text-2xl font-black text-amber-600 dark:text-amber-400">0 ج.م</span>
+                </div>
+            </div>
+            <button onclick="sendOfferWhatsApp()"
+                class="w-full py-4 rounded-xl bg-[#25D366] text-white font-bold text-lg flex items-center justify-center gap-2 shadow-lg bioluminescent-glow transition-all active:scale-95">
+                <span class="material-symbols-outlined text-xl">send</span>
+                <span data-i18n="offer_btn_send">إرسال الطلب عبر واتساب</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="offer-checkout-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md" onclick="closeOfferCheckoutModal()"></div>
+        <div
+            class="relative bg-white dark:bg-slate-900 w-full max-w-xl rounded-t-3xl md:rounded-[3rem] overflow-hidden shadow-2xl modal-content">
+            <div class="p-8 md:p-12">
+                <div class="flex justify-between items-start mb-8">
+                    <div>
+                        <h2 class="text-3xl font-black text-primary dark:text-white mb-2">بيانات التوصيل</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 font-bold italic">من فضلك أدخل بياناتك لتأكيد طلب العرض</p>
+                    </div>
+                    <button onclick="closeOfferCheckoutModal()"
+                        class="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-100 dark:bg-white/5 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+
+                <form id="offer-checkout-form" onsubmit="handleOfferCheckoutSubmit(event)" class="space-y-6">
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-400 uppercase tracking-widest pr-2">الاسم الكامل</label>
+                        <input type="text" id="offer-cust-name" required placeholder="مثال: أحمد محمد"
+                            class="w-full bg-slate-50 dark:bg-white/5 border-none rounded-2xl p-5 text-sm font-bold ring-1 ring-slate-100 dark:ring-white/10 focus:ring-2 focus:ring-amber-500 transition-all dark:text-white">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-400 uppercase tracking-widest pr-2">رقم الهاتف</label>
+                        <input type="tel" id="offer-cust-phone" required placeholder="010..."
+                            class="w-full bg-slate-50 dark:bg-white/5 border-none rounded-2xl p-5 text-sm font-bold ring-1 ring-slate-100 dark:ring-white/10 focus:ring-2 focus:ring-amber-500 transition-all dark:text-white">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-400 uppercase tracking-widest pr-2">العنوان بالتفصيل</label>
+                        <textarea id="offer-cust-address" required rows="3" placeholder="الشارع، رقم العمارة، الدور..."
+                            class="w-full bg-slate-50 dark:bg-white/5 border-none rounded-2xl p-5 text-sm font-bold ring-1 ring-slate-100 dark:ring-white/10 focus:ring-2 focus:ring-amber-500 transition-all dark:text-white resize-none"></textarea>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-400 uppercase tracking-widest pr-2" data-i18n="offer_people">عدد الأفراد</label>
+                        <input type="number" id="offer-people-count" min="1" value="1" placeholder="مثال: 4"
+                            class="w-full bg-slate-50 dark:bg-white/5 border-none rounded-2xl p-5 text-sm font-bold ring-1 ring-slate-100 dark:ring-white/10 focus:ring-2 focus:ring-amber-500 transition-all dark:text-white">
+                    </div>
+                    <div class="pt-4">
+                        <button type="submit"
+                            class="w-full bg-amber-500 hover:bg-amber-600 text-white py-6 rounded-[2rem] font-black text-lg tracking-widest shadow-xl shadow-amber-500/20 transition-all flex items-center justify-center gap-4 active:scale-95">
+                            <span>إتمام الطلب وإرسال لواتساب</span>
+                            <span class="material-symbols-outlined">send</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Cart Button (Mobile) -->
+    <div class="offers-cart-btn md:hidden">
+        <button onclick="toggleOffersCart()"
+            class="relative w-16 h-16 bg-amber-500 text-white rounded-full shadow-[0_8px_25px_rgba(245,158,11,0.4)] flex items-center justify-center transition-all active:scale-90 hover:scale-105">
+            <span class="material-symbols-outlined text-3xl">local_offer</span>
+            <span id="offer-mobile-cart-count"
+                class="absolute -top-1 -right-1 bg-secondary text-white text-[10px] font-bold w-6 h-6 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900">0</span>
+        </button>
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav
+        class="md:hidden fixed bottom-0 inset-x-0 flex justify-center items-center bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-4 pb-safe border-t border-slate-200 dark:border-slate-800 z-50 h-20 shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
+        <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="index.html">
+            <span class="material-symbols-outlined">restaurant_menu</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']" data-i18n="nav_menu">Menu</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="about.html">
+            <span class="material-symbols-outlined">info</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']" data-i18n="nav_about">About</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-primary dark:text-abyss-primary border-t-2 border-primary dark:border-abyss-primary pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="offers.html">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">local_offer</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']">عروض</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="contact.html">
+            <span class="material-symbols-outlined">location_on</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']" data-i18n="nav_contact">Contact</span>
+        </a>
+    </nav>
+
+    <div id="toast-container"></div>
+
+    <script type="module">
+        import { getActiveOffer, getMenuItems, saveOrder, trackWhatsAppOrder } from './database/services.js';
+
+        let offerCart = [];
+        let offerData = null;
+        let offerItemsData = [];
+        let offerDiscountPct = 0;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            loadOfferPage();
+        });
+
+        async function loadOfferPage() {
+            const loadingEl = document.getElementById('offer-loading');
+            const wrapper = document.getElementById('offer-items-wrapper');
+            const errorEl = document.getElementById('offer-error');
+            const endedOverlay = document.getElementById('offer-ended-overlay');
+            const hero = document.getElementById('offer-hero');
+
+            try {
+                const offer = await getActiveOffer();
+                if (!offer || !offer.isActive) {
+                    loadingEl.classList.add('hidden');
+                    endedOverlay.classList.remove('hidden');
+                    hero.classList.add('opacity-30');
+                    return;
+                }
+
+                offerData = offer;
+                offerDiscountPct = offer.discountPercentage || 0;
+
+                // Get full menu data for items
+                const allItems = await getMenuItems();
+                const offerItemIds = offer.items || [];
+                offerItemsData = allItems.filter(item => offerItemIds.includes(item.id));
+
+                if (offerItemsData.length === 0) {
+                    loadingEl.classList.add('hidden');
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+
+                // Update hero
+                const heroTitle = document.getElementById('offer-hero-title');
+                const discountLabel = document.getElementById('offer-discount-label');
+                const lang = localStorage.getItem('preferred_language') || 'ar';
+                heroTitle.textContent = offer.name || (lang === 'ar' ? 'عرض مميز' : 'Special Offer');
+                discountLabel.textContent = `${offer.discountPercentage}% ${lang === 'ar' ? 'خصم' : 'OFF'}`;
+
+                // Render items by category
+                renderOfferItems();
+
+                loadingEl.classList.add('hidden');
+                wrapper.classList.remove('hidden');
+                updateOfferCartUI();
+            } catch (e) {
+                console.error('Error loading offer:', e);
+                loadingEl.classList.add('hidden');
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        function renderOfferItems() {
+            const wrapper = document.getElementById('offer-items-wrapper');
+            const data = offerItemsData;
+            const lang = localStorage.getItem('preferred_language') || 'ar';
+
+            // Get categories from offer items
+            const cats = [...new Set(data.map(item => item.category || 'عام'))];
+
+            const swipeText = lang === 'ar' ? 'اسحب للمزيد' : 'Swipe for more';
+            const arrowIcon = lang === 'ar' ? 'arrow_back' : 'arrow_forward';
+
+            wrapper.innerHTML = cats.map(cat => {
+                const items = data.filter(item => (item.category || 'عام') === cat);
+                if (items.length === 0) return '';
+
+                const swipeIndicator = items.length > 1 ? `
+                    <div class="md:hidden flex items-center gap-1.5 text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-white/10 py-1.5 px-3 rounded-full text-[10px] font-bold tracking-wider animate-pulse flex-shrink-0">
+                        <span>${swipeText}</span>
+                        <span class="material-symbols-outlined text-[14px]">${arrowIcon}</span>
+                    </div>
+                ` : '';
+
+                return `
+                    <section>
+                        <div class="flex items-center justify-between gap-2 mb-8">
+                            <h2 class="font-h2 text-2xl md:text-3xl text-primary dark:text-white whitespace-nowrap">${cat}</h2>
+                            <div class="h-[1px] flex-grow bg-slate-200 dark:bg-white/10 mx-2"></div>
+                            ${swipeIndicator}
+                        </div>
+                        <div class="flex overflow-x-auto pb-8 -mx-6 px-6 md:mx-0 md:px-0 scroll-smooth snap-x snap-mandatory no-scrollbar md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                            ${items.map(item => `
+                                <div class="w-[80vw] md:w-full flex-shrink-0 snap-center md:snap-align-none">
+                                    ${createOfferItemCard(item, lang)}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </section>
+                `;
+            }).join('');
+        }
+
+        function createOfferItemCard(item, lang) {
+            const name = lang === 'ar' ? item.name_ar : item.name;
+            const desc = lang === 'ar' ? item.description_ar : item.description;
+            const currency = translations[lang]?.price_currency || 'ج.م';
+            const cartItem = offerCart.find(c => c.itemId === item.id);
+            const qty = cartItem ? cartItem.quantity : 0;
+
+            const imgSrc = (item.images && item.images.length > 0) ? item.images[0] : (item.image || './assets/only logo.png');
+
+            return `
+                <div class="offer-item-card bg-white dark:bg-abyss-container border border-slate-100 dark:border-white/5 rounded-3xl overflow-hidden">
+                    <div class="aspect-[4/3] overflow-hidden">
+                        <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="${imgSrc}" loading="lazy" decoding="async" alt="${name}">
+                    </div>
+                    <div class="p-4 md:p-6">
+                        <h3 class="font-h3 text-xl text-primary dark:text-white mb-2">${name}</h3>
+                        ${desc ? `<p class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 mb-4">${desc}</p>` : ''}
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-slate-50 dark:border-white/5">
+                            <span class="text-2xl font-black text-secondary">${item.price} <span class="text-sm font-bold">${currency}</span></span>
+                            <div class="flex items-center gap-2">
+                                ${qty > 0 ? `
+                                    <button onclick="decreaseOfferQty('${item.id}')" class="offer-qty-btn bg-red-100 dark:bg-red-500/20 text-red-500 hover:bg-red-500 hover:text-white">−</button>
+                                    <span class="font-black text-lg w-8 text-center" id="qty-${item.id}">${qty}</span>
+                                    <button onclick="increaseOfferQty('${item.id}')" class="offer-qty-btn bg-green-100 dark:bg-green-500/20 text-green-500 hover:bg-green-500 hover:text-white">+</button>
+                                ` : `
+                                    <button onclick="increaseOfferQty('${item.id}')" class="bg-primary hover:bg-secondary text-white px-5 py-3 rounded-2xl font-bold flex items-center gap-2 transition-all active:scale-95">
+                                        <span class="material-symbols-outlined text-lg">add</span>
+                                        <span class="text-sm" data-i18n="offer_add">إضافة</span>
+                                    </button>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.increaseOfferQty = increaseOfferQty;
+        window.decreaseOfferQty = decreaseOfferQty;
+
+        function increaseOfferQty(itemId) {
+            const existing = offerCart.find(c => c.itemId === itemId);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                const item = offerItemsData.find(i => i.id === itemId);
+                if (!item) return;
+                offerCart.push({
+                    id: Date.now().toString() + itemId,
+                    itemId: item.id,
+                    name: item.name_ar || item.name,
+                    price: item.price,
+                    quantity: 1
+                });
+            }
+            updateOfferCartUI();
+            renderOfferItems();
+        }
+
+        function decreaseOfferQty(itemId) {
+            const existing = offerCart.find(c => c.itemId === itemId);
+            if (!existing) return;
+            existing.quantity -= 1;
+            if (existing.quantity <= 0) {
+                offerCart = offerCart.filter(c => c.itemId !== itemId);
+            }
+            updateOfferCartUI();
+            renderOfferItems();
+        }
+
+        function toggleOffersCart(forceOpen = false) {
+            const drawer = document.getElementById('offer-cart-drawer');
+            const overlay = document.getElementById('offer-cart-overlay');
+            if (forceOpen) {
+                drawer.classList.add('open');
+                overlay.classList.add('active');
+            } else {
+                drawer.classList.toggle('open');
+                overlay.classList.toggle('active');
+            }
+        }
+        window.toggleOffersCart = toggleOffersCart;
+
+        function updateOfferCartUI() {
+            const container = document.getElementById('offer-cart-items');
+            const totalBeforeEl = document.getElementById('offer-total-before');
+            const discountAmountEl = document.getElementById('offer-discount-amount');
+            const savedAmountEl = document.getElementById('offer-saved-amount');
+            const totalAfterEl = document.getElementById('offer-total-after');
+            const badge = document.getElementById('offer-cart-badge');
+            const mobileCount = document.getElementById('offer-mobile-cart-count');
+            const footer = document.getElementById('offer-cart-footer');
+            const lang = localStorage.getItem('preferred_language') || 'ar';
+            const currency = translations[lang]?.price_currency || 'ج.م';
+
+            const totalItems = offerCart.reduce((sum, c) => sum + c.quantity, 0);
+
+            if (totalItems === 0) {
+                container.innerHTML = `<div class="flex flex-col items-center justify-center h-48 opacity-40">
+                    <span class="material-symbols-outlined text-4xl mb-2">local_offer</span>
+                    <p class="font-bold" data-i18n="offer_cart_empty">اختر أصناف من العرض أدناه</p>
+                </div>`;
+                badge.classList.add('hidden');
+                mobileCount.innerText = '0';
+                totalBeforeEl.innerText = `0 ${currency}`;
+                discountAmountEl.innerText = `-0 ${currency}`;
+                savedAmountEl.innerText = `0 ${currency}`;
+                totalAfterEl.innerText = `0 ${currency}`;
+                return;
+            }
+
+            badge.classList.remove('hidden');
+            badge.innerText = totalItems;
+            mobileCount.innerText = totalItems;
+
+            container.innerHTML = offerCart.map(c => `
+                <div class="flex gap-4 bg-slate-50 dark:bg-white/5 p-4 rounded-2xl border border-slate-100 dark:border-white/10">
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-bold text-primary dark:text-white">${c.name}</h4>
+                            <button onclick="removeOfferItem('${c.itemId}')" class="text-slate-300 hover:text-red-500 transition-colors">
+                                <span class="material-symbols-outlined text-lg">close</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center justify-between mt-3">
+                            <div class="flex items-center gap-2">
+                                <button onclick="decreaseOfferQty('${c.itemId}')" class="w-8 h-8 rounded-full bg-red-100 dark:bg-red-500/20 text-red-500 flex items-center justify-center font-bold hover:bg-red-500 hover:text-white transition-all">−</button>
+                                <span class="font-black text-base w-6 text-center">${c.quantity}</span>
+                                <button onclick="increaseOfferQty('${c.itemId}')" class="w-8 h-8 rounded-full bg-green-100 dark:bg-green-500/20 text-green-500 flex items-center justify-center font-bold hover:bg-green-500 hover:text-white transition-all">+</button>
+                            </div>
+                            <span class="font-black text-secondary">${c.price * c.quantity} ${currency}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Calculate totals
+            const totalBefore = offerCart.reduce((sum, c) => sum + (c.price * c.quantity), 0);
+            const discountAmount = totalBefore * (offerDiscountPct / 100);
+            const totalAfter = totalBefore - discountAmount;
+
+            totalBeforeEl.innerText = `${totalBefore.toFixed(2)} ${currency}`;
+            discountAmountEl.innerText = `-${discountAmount.toFixed(2)} ${currency}`;
+            savedAmountEl.innerText = `${discountAmount.toFixed(2)} ${currency}`;
+            totalAfterEl.innerText = `${totalAfter.toFixed(2)} ${currency}`;
+        }
+
+        window.removeOfferItem = function(itemId) {
+            offerCart = offerCart.filter(c => c.itemId !== itemId);
+            updateOfferCartUI();
+            renderOfferItems();
+        };
+
+        function sendOfferWhatsApp() {
+            if (offerCart.length === 0) {
+                const lang = localStorage.getItem('preferred_language') || 'ar';
+                const msg = lang === 'ar' ? 'يرجى إضافة الأطباق إلى السلة أولاً' : 'Please add items to your cart first';
+                showNotification(msg, 'error');
+                return;
+            }
+            openOfferCheckoutModal();
+        }
+        window.sendOfferWhatsApp = sendOfferWhatsApp;
+
+        function openOfferCheckoutModal() {
+            const modal = document.getElementById('offer-checkout-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            const savedInfo = JSON.parse(localStorage.getItem('samaka_customer_info') || '{}');
+            if (savedInfo.name) document.getElementById('offer-cust-name').value = savedInfo.name;
+            if (savedInfo.phone) document.getElementById('offer-cust-phone').value = savedInfo.phone;
+            if (savedInfo.address) document.getElementById('offer-cust-address').value = savedInfo.address;
+        }
+        window.openOfferCheckoutModal = openOfferCheckoutModal;
+
+        function closeOfferCheckoutModal() {
+            const modal = document.getElementById('offer-checkout-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+        window.closeOfferCheckoutModal = closeOfferCheckoutModal;
+
+        async function handleOfferCheckoutSubmit(event) {
+            event.preventDefault();
+
+            const customerInfo = {
+                name: document.getElementById('offer-cust-name').value,
+                phone: document.getElementById('offer-cust-phone').value,
+                address: document.getElementById('offer-cust-address').value
+            };
+
+            localStorage.setItem('samaka_customer_info', JSON.stringify(customerInfo));
+
+            const lang = localStorage.getItem('preferred_language') || 'en';
+            const t = translations[lang];
+            const currency = t?.price_currency || 'ج.م';
+
+            const totalBefore = offerCart.reduce((sum, c) => sum + (c.price * c.quantity), 0);
+            const discountAmount = totalBefore * (offerDiscountPct / 100);
+            const totalAfter = totalBefore - discountAmount;
+            const peopleCount = document.getElementById('offer-people-count').value || 1;
+
+            let displayPhone = customerInfo.phone || "";
+            if (displayPhone.startsWith('0')) displayPhone = '+2' + displayPhone;
+            else if (!displayPhone.startsWith('+') && displayPhone.length === 11) displayPhone = '+2' + displayPhone;
+
+            let message = `*${offerData.name || t.offer_order_header}*\n\n`;
+            message += `*${t.offer_customer_info}:*\n`;
+            message += `👤 الاسم: ${customerInfo.name}\n`;
+            message += `📞 الهاتف: ${displayPhone}\n`;
+            message += `🏠 العنوان: ${customerInfo.address}\n\n`;
+            message += `👥 عدد الأفراد: ${peopleCount}\n\n`;
+            message += `------------------\n`;
+            message += `*الأصناف:*\n`;
+
+            offerCart.forEach((item, index) => {
+                message += `${index + 1}. *${item.name}* (x${item.quantity}) - ${item.price * item.quantity} ${currency}\n`;
+            });
+
+            message += `------------------\n`;
+            message += `*${t.offer_before}:* ${totalBefore.toFixed(2)} ${currency}\n`;
+            message += `*${t.offer_discount}:* ${offerDiscountPct}% (-${discountAmount.toFixed(2)} ${currency})\n`;
+            message += `*${t.offer_saved}:* ${discountAmount.toFixed(2)} ${currency}\n`;
+            message += `*${t.offer_after}:* ${totalAfter.toFixed(2)} ${currency}\n`;
+
+            const orderId = 'OFR-' + Date.now();
+            const orderData = {
+                id: orderId,
+                type: 'offer',
+                offerName: offerData.name,
+                timestamp: new Date().toISOString(),
+                items: offerCart,
+                totalBefore,
+                discountPercentage: offerDiscountPct,
+                discountAmount,
+                totalAfter,
+                peopleCount,
+                status: 'pending',
+                userName: customerInfo.name,
+                phone: customerInfo.phone,
+                address: customerInfo.address
+            };
+
+            try {
+                await saveOrder(orderData);
+                trackWhatsAppOrder();
+                openWhatsApp(message);
+                closeOfferCheckoutModal();
+                offerCart = [];
+                updateOfferCartUI();
+                renderOfferItems();
+                showNotification('تم إرسال طلب العرض بنجاح ✨');
+            } catch (err) {
+                console.error(err);
+                showNotification('حدث خطأ أثناء حفظ الطلب، يرجى المحاولة مرة أخرى', 'error');
+            }
+        }
+        window.handleOfferCheckoutSubmit = handleOfferCheckoutSubmit;
+
+        function showNotification(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            const colors = { success: 'bg-emerald-500', error: 'bg-red-500', info: 'bg-sky-500' };
+            toast.className = `${colors[type] || colors.success} text-white px-8 py-5 rounded-[2rem] shadow-2xl flex items-center gap-3 animate-in-up pointer-events-auto backdrop-blur-lg bg-opacity-90`;
+            toast.innerHTML = `
+                <span class="material-symbols-outlined text-xl">${type === 'error' ? 'error' : 'check_circle'}</span>
+                <span class="text-sm font-black italic tracking-tight">${message}</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('animate-out-down');
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+        }
+        window.showNotification = showNotification;
+    </script>
+</body>
+
+</html>
