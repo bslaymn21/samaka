@@ -4,6 +4,8 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="description" content="تصفح منيو سمكة الكامل - أشهى المأكولات البحرية الطازجة في الإسكندرية. سمك مشوي، مقلي، سنجاري، وأكثر." />
+    <meta name="keywords" content="منيو سمكة، مأكولات بحرية، سمك مشوي، مطعم سمكة، أكل بحري الإسكندرية" />
     <title>سمكة | المنيو</title>
     <link rel="icon" type="image/png" href="./assets/only logo.png">
 
@@ -22,21 +24,162 @@
     <script src="./js/tailwind-config.js"></script>
     <link rel="stylesheet" href="./css/styles.css">
 
+    <script src="./js/translations.js"></script>
+    <script src="./js/language-selector.js"></script>
+    <script src="./js/theme-manager.js"></script>
+    <script src="./js/preloader.js"></script>
+    <script src="./js/data.js"></script>
+
     <style>
-        body { margin: 0; }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .option-chip {
+            @apply px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-200 cursor-pointer whitespace-nowrap;
+        }
+        .option-chip.active {
+            @apply bg-primary text-white shadow-lg;
+        }
+        .option-chip:not(.active) {
+            @apply bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10;
+        }
     </style>
 </head>
 
-<body>
-    <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 px-6 text-center">
-        <div class="w-24 h-24 bg-red-100 dark:bg-red-500/10 rounded-full flex items-center justify-center mb-8">
-            <span class="material-symbols-outlined text-5xl text-red-500">error_outline</span>
+<body class="font-body-md text-on-surface rtl-mode">
+    <div id="site-preloader" class="preloader-container">
+        <div class="absolute inset-0 z-0 opacity-40 pointer-events-none preloader-gradient"></div>
+        <div class="relative flex flex-col items-center">
+            <div class="mb-lg">
+                <img src="./assets/only logo.png" alt="Samaka Logo"
+                    class="preloader-logo relative z-10 logo-primary-filter animate-swim animate-glow" loading="eager">
+            </div>
         </div>
-        <h1 class="text-3xl md:text-4xl font-black text-primary dark:text-white mb-4">عذراً</h1>
-        <p class="text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-lg leading-relaxed font-bold">
-            حدث خطأ في البيانات<br>سوف نعالج المشكلة في أقرب وقت
-        </p>
+        <div class="w-full text-center space-y-md">
+            <div class="hidden" data-i18n="loader_title">SAMAKA</div>
+            <p class="font-body-md text-sm text-slate-500 italic opacity-60" data-i18n="loader_desc"></p>
+            <div class="preloader-progress mx-auto">
+                <div class="preloader-progress-bar animate-loading"></div>
+            </div>
+        </div>
     </div>
+
+    <header
+        class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-white/10 docked full-width top-0 sticky z-50 transition-colors h-16 md:h-20">
+        <div class="flex justify-between items-center w-full px-6 py-4 mx-auto max-w-container-max relative h-full">
+            <a href="index.html" class="flex items-center absolute start-6 top-1/2 -translate-y-1/2 z-10">
+                <img src="./assets/only logo.png" alt="Samaka" class="h-14 md:h-20 w-auto object-contain">
+            </a>
+            <div class="flex-1"></div>
+            <nav class="hidden md:flex gap-md items-center">
+                <a class="text-primary dark:text-abyss-primary font-bold font-label-caps hover:text-secondary dark:hover:text-abyss-secondary transition-colors duration-200"
+                    href="index.html" data-i18n="nav_home">المنيو</a>
+                <a class="text-slate-500 dark:text-abyss-on-variant font-label-caps hover:text-secondary dark:hover:text-abyss-secondary transition-colors duration-200"
+                    href="about.html" data-i18n="nav_about">عنا</a>
+                <a class="text-slate-500 dark:text-abyss-on-variant font-label-caps hover:text-secondary dark:hover:text-abyss-secondary transition-colors duration-200"
+                    href="offers.html" data-i18n="offer_title">العروض</a>
+                <a class="text-slate-500 dark:text-abyss-on-variant font-label-caps hover:text-secondary dark:hover:text-abyss-secondary transition-colors duration-200"
+                    href="contact.html" data-i18n="nav_contact">اتصل بنا</a>
+            </nav>
+            <div class="flex-1 flex justify-end items-center gap-3">
+                <button onclick="toggleTheme()"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors flex items-center justify-center text-slate-500 dark:text-abyss-on-variant"
+                    title="Toggle Theme">
+                    <span class="material-symbols-outlined theme-icon">dark_mode</span>
+                </button>
+                <button onclick="toggleLanguage()"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors flex items-center justify-center text-slate-500 dark:text-abyss-on-variant"
+                    title="Change Language">
+                    <span class="material-symbols-outlined">translate</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-container-max mx-auto px-gutter py-xl pb-32 pb-safe-xl">
+        <div class="flex flex-col lg:flex-row gap-6 lg:gap-12">
+            <!-- Filters Sidebar / Top Bar -->
+            <aside class="flex-shrink-0 lg:w-[260px] xl:w-[300px]">
+                <div class="lg:sticky lg:top-[6rem] lg:overflow-y-auto space-y-4 md:space-y-8">
+                    <div id="category-filters-desktop" class="hidden lg:flex flex-wrap items-center gap-2 md:gap-3"></div>
+                    <div id="category-filters-mobile" class="lg:hidden flex justify-start gap-4 overflow-x-auto pb-6 no-scrollbar border-b border-slate-100 dark:border-white/5 scroll-smooth"></div>
+                    <div id="desktop-search" class="hidden lg:block relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-abyss-on-variant">search</span>
+                        <input type="text" id="desktop-search-input" data-i18n="search" placeholder="ابحث..."
+                            class="w-full pl-11 pr-5 py-3.5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 dark:text-white text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2680FF] transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500">
+                    </div>
+                </div>
+            </aside>
+            <div class="flex-1 min-w-0">
+                <div id="filter-info" class="flex items-center gap-3 mb-8 flex-wrap">
+                    <div id="active-filter-name" class="text-primary dark:text-abyss-primary font-h3 text-lg font-bold tracking-tight"></div>
+                    <span id="items-count" class="text-slate-400 dark:text-abyss-on-variant text-sm font-bold">0</span>
+                </div>
+                <div id="menu-container" class="space-y-16"></div>
+                <div id="empty-state" class="hidden flex flex-col items-center justify-center py-20 text-center">
+                    <span class="material-symbols-outlined text-6xl text-slate-300 dark:text-slate-600 mb-6">search_off</span>
+                    <p class="text-slate-400 dark:text-slate-500 font-bold text-lg" data-i18n="no_results">لا توجد نتائج</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Search Panel -->
+    <div id="mobile-search-panel"
+        class="fixed top-0 start-0 w-full h-full z-[100] flex flex-col bg-white dark:bg-slate-900 transition-all duration-500 ease-out translate-x-full opacity-0 rtl:-translate-x-full">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-white/10">
+            <span class="font-h3 text-xl font-bold text-primary dark:text-white" data-i18n="search">بحث</span>
+            <button onclick="toggleMobileSearch()" class="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="px-6 py-4">
+            <input type="text" id="mobile-search-input" data-i18n="search" placeholder="ابحث..."
+                class="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 dark:text-white text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2680FF] transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500">
+        </div>
+        <div id="mobile-search-results" class="flex-1 overflow-y-auto px-6 pb-8 space-y-4"></div>
+    </div>
+
+    <!-- Footer (mobile only) -->
+    <footer class="lg:hidden w-full"></footer>
+
+    <!-- Bottom Nav -->
+    <nav
+        class="md:hidden fixed bottom-0 inset-x-0 flex justify-center items-center bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-4 pb-safe border-t border-slate-200 dark:border-slate-800 z-50 h-20 shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
+        <a class="flex flex-col items-center justify-center text-primary dark:text-abyss-primary border-t-2 border-primary dark:border-abyss-primary pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="index.html">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">restaurant_menu</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']" data-i18n="nav_menu">Menu</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="about.html">
+            <span class="material-symbols-outlined">info</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']" data-i18n="nav_about">About</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="offers.html">
+            <span class="material-symbols-outlined">local_offer</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']">عروض</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 flex-1 h-full active:scale-95 transition-transform duration-150"
+            href="contact.html">
+            <span class="material-symbols-outlined">location_on</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider font-['Epilogue']" data-i18n="nav_contact">Contact</span>
+        </a>
+    </nav>
+
+    <div id="toast-container"></div>
+
+    <script src="./js/translations.js"></script>
+    <script src="./js/language-selector.js"></script>
+    <script src="./js/theme-manager.js"></script>
+    <script src="./js/preloader.js"></script>
+    <script src="./js/data.js"></script>
+    <script type="module" src="./js/main.js"></script>
 </body>
 
 </html>
