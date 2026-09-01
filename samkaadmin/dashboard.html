@@ -4,66 +4,41 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>سمكة | لدفع الاشتراك</title>
-    <link rel="icon" type="image/png" href="../assets/only logo.png">
-
-    <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: #020617;
+            background: #000;
             color: #fff;
             direction: rtl;
-            font-family: 'Work Sans', sans-serif;
+            font-family: Arial, 'Segoe UI', Tahoma, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
         }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        h1 {
+            font-size: clamp(2rem, 7vw, 4rem);
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 20px;
         }
-        .glow {
-            box-shadow: 0 0 60px rgba(245, 158, 11, 0.2);
+        p {
+            color: #9ca3af;
+            font-size: clamp(0.9rem, 3vw, 1.15rem);
+            line-height: 1.8;
         }
-        @keyframes wiggle {
-            0%, 100% { transform: rotate(-8deg); }
-            50% { transform: rotate(8deg); }
-        }
-        .animate-wiggle {
-            animation: wiggle 1.5s ease-in-out infinite;
-            display: inline-block;
+        .emoji {
+            font-size: 1.2em;
+            vertical-align: middle;
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-6 overflow-hidden">
-    <!-- Animated background -->
-    <div class="fixed inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-red-500/20 blur-[120px] rounded-full animate-pulse"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-amber-500/10 blur-[120px] rounded-full animate-pulse" style="animation-delay: 2s"></div>
-    </div>
-
-    <div class="w-full max-w-lg relative z-10 glow">
-        <div class="glass-card rounded-[40px] shadow-2xl p-8 md:p-12 text-center">
-            <div class="mb-8">
-                <img src="../assets/only logo.png" alt="Samaka Logo" class="h-20 w-auto mx-auto mb-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
-            </div>
-
-            <div class="mb-6">
-                <span class="material-symbols-outlined text-7xl text-amber-500">payments</span>
-            </div>
-
-            <h1 class="text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
-                هاتوووووووو الفلوس الي عليكم
-                <span class="animate-wiggle text-6xl align-middle">🤣</span>
-            </h1>
-
-            <p class="text-slate-400 text-sm md:text-base leading-relaxed">
-                الموقع مقفول ومش هيفتح غير لما الفلوس تتسد 😉
-            </p>
-
-            <div class="mt-8 pt-8 border-t border-white/5">
-                <p class="text-slate-600 text-[10px] font-bold uppercase tracking-tighter">&copy; 2026 SAMAKA &bull; PAYMENT REQUIRED</p>
-            </div>
-        </div>
+<body>
+    <div>
+        <h1>هاتوووووووو الفلوس الي عليكم <span class="emoji">🤣</span></h1>
+        <p>الموقع مقفول ومش هيفتح غير لما الفلوس تتسد 😉</p>
     </div>
 </body>
 </html>
